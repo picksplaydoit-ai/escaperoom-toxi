@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#050814">
+  <meta name="description" content="Escape Room Toxicológico Forense - Caso Clínico #CZ-892: El Enigma de Praga. Actividad interactiva basada en toxicología médica.">
   <title>Escape Room Toxicológico: El Enigma de Praga</title>
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- Confetti library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Orbitron, Rajdhani, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -17,14 +25,16 @@
         extend: {
           colors: {
             cyber: {
-              dark: '#050811',
-              card: '#0d1527',
-              neon: '#06b6d4',
-              accent: '#8b5cf6',
-              alert: '#f43f5e',
-              success: '#10b981',
-              warning: '#f59e0b',
-              surface: '#131e36'
+              bg: '#050814',
+              surface: '#0b1224',
+              card: '#0f1a35',
+              border: '#1e2d52',
+              cyan: '#06b6d4',
+              neon: '#38bdf8',
+              purple: '#8b5cf6',
+              amber: '#f59e0b',
+              rose: '#f43f5e',
+              emerald: '#10b981'
             }
           },
           fontFamily: {
@@ -34,1218 +44,2132 @@
           }
         }
       }
-    }
+    };
   </script>
 
   <style>
-    body {
-      background-color: #050811;
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 45%),
-        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 45%),
-        radial-gradient(at 50% 50%, rgba(13, 21, 39, 0.9) 0px, transparent 100%);
-      color: #e2e8f0;
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
     }
-    .scanline {
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    body {
+      background-color: #050814;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.12) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 40%),
+        radial-gradient(at 50% 50%, rgba(11, 18, 36, 0.95) 0px, transparent 100%);
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Scanline retrofuturista suave */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
       background-size: 100% 3px, 6px 100%;
       pointer-events: none;
     }
-    .glass-panel {
-      background: rgba(13, 21, 39, 0.82);
+
+    /* Efectos de cristal */
+    .glass-card {
+      background: rgba(15, 26, 53, 0.78);
       backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.09);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .active-room-tab {
-      border-color: #06b6d4 !important;
-      background: rgba(6, 182, 212, 0.2) !important;
+    .glass-card-bright {
+      background: rgba(17, 30, 62, 0.92);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+
+    /* Pestañas de fases activas */
+    .phase-pill.active {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(139, 92, 246, 0.25));
+      border-color: #38bdf8 !important;
       color: #38bdf8 !important;
-      box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
     }
-    .scrollbar-thin::-webkit-scrollbar {
+    .phase-pill.completed {
+      border-color: rgba(16, 185, 129, 0.5) !important;
+      color: #34d399 !important;
+    }
+
+    /* Botón interactivo táctil */
+    .touch-btn {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .touch-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* Estilo del teclado numérico */
+    .num-key {
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.15rem;
+      border-radius: 0.75rem;
+      transition: all 0.12s ease;
+      user-select: none;
+    }
+    .num-key:active {
+      transform: scale(0.92);
+      filter: brightness(1.3);
+    }
+
+    /* Animaciones suaves */
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .pulse-glow {
+      animation: pulse-subtle 2.5s infinite ease-in-out;
+    }
+
+    /* Opciones interactivas */
+    .quiz-option {
+      transition: all 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .quiz-option:hover {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(30, 45, 82, 0.6);
+    }
+    .quiz-option.selected {
+      border-color: #38bdf8 !important;
+      background: rgba(6, 182, 212, 0.2) !important;
+      box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+    }
+
+    /* Custom range slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #1e293b;
+      border-radius: 9999px;
+      height: 8px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 22px;
+      width: 22px;
+      border-radius: 50%;
+      background: #06b6d4;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+      border: 2px solid #ffffff;
+    }
+
+    /* Scrollbars elegantes */
+    ::-webkit-scrollbar {
       width: 6px;
+      height: 6px;
     }
-    .scrollbar-thin::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
+    ::-webkit-scrollbar-track {
+      background: rgba(11, 18, 36, 0.6);
     }
-    .evidence-tag {
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px dashed rgba(245, 158, 11, 0.4);
-      color: #fbbf24;
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.6);
     }
   </style>
 </head>
-<body class="relative overflow-x-hidden">
-  <!-- Capa de scanlines retro-tecnológica -->
-  <div class="fixed inset-0 scanline z-50 pointer-events-none opacity-30"></div>
+<body class="relative selection:bg-cyan-500 selection:text-white pb-12">
 
-  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+  <!-- Scanlines visual layer -->
+  <div class="fixed inset-0 scanlines z-40 pointer-events-none opacity-25"></div>
+
+  <!-- ========================================================================= -->
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR ERGONÓMICA Y RESPONSIVA (STICKY HEADER)       -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-30 glass-card-bright border-b border-slate-800/80 px-3 md:px-6 py-2.5 shadow-xl shadow-black/40">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 md:gap-4">
+      
       <!-- Logo y Título -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30">
-          <i class="fa-solid fa-microscope text-xl animate-pulse"></i>
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 via-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/25 shrink-0">
+          <i class="fa-solid fa-microscope text-sm md:text-lg animate-pulse"></i>
         </div>
-        <div>
-          <h1 class="font-display text-sm md:text-base font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-200 to-indigo-400 tracking-wider">
-            CASO CLÍNICO #CZ-892: PRAGA
-          </h1>
-          <p class="text-[11px] text-slate-400 font-tech uppercase tracking-widest flex items-center gap-1.5">
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
             <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            Laboratorio de Toxicología Forense • Univ. Carolina
+            <h1 class="font-display text-xs md:text-sm lg:text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-100 to-indigo-300 truncate tracking-wide">
+              CASO #CZ-892: PRAGA
+            </h1>
+          </div>
+          <p class="text-[10px] md:text-xs text-slate-400 font-tech uppercase tracking-wider truncate">
+            Toxicolab • Univ. Carolina
           </p>
         </div>
       </div>
 
-      <!-- Monitor vital en tiempo real de Mateo -->
-      <div class="flex items-center gap-2 md:gap-4 bg-slate-950/90 px-3.5 py-1.5 rounded-xl border border-rose-900/60 shadow-inner">
-        <div class="flex items-center gap-1.5 text-rose-400 font-mono text-xs md:text-sm">
-          <i class="fa-solid fa-heart-pulse animate-bounce"></i>
-          <span>BPM: <strong id="vitalsBpm" class="text-rose-300 font-bold">148</strong></span>
+      <!-- Monitor Vital de Mateo con Canvas ECG dinámico -->
+      <div class="flex items-center gap-1.5 md:gap-3 bg-slate-950/90 px-2.5 md:px-3 py-1.5 rounded-xl border border-slate-800 shadow-inner">
+        <!-- Canvas ECG -->
+        <div class="relative w-12 sm:w-20 md:w-24 h-6 hidden min-[380px]:block">
+          <canvas id="ecgCanvas" width="96" height="24" class="w-full h-full"></canvas>
         </div>
-        <div class="h-4 w-px bg-slate-800"></div>
-        <div class="text-amber-400 font-mono text-xs md:text-sm flex items-center gap-1">
-          <i class="fa-solid fa-temperature-three-quarters"></i>
-          <span>TEMP: <strong id="vitalsTemp" class="text-amber-300 font-bold">39.8°C</strong></span>
-        </div>
-        <div class="h-4 w-px bg-slate-800"></div>
-        <div class="text-cyan-400 font-mono text-xs hidden sm:flex items-center gap-1">
-          <i class="fa-solid fa-shield-halved"></i>
-          <span id="vitalsStatus" class="font-semibold text-rose-400">CRÍTICO</span>
-        </div>
-      </div>
 
-      <!-- Controles de partida y manuales -->
-      <div class="flex items-center gap-2.5">
-        <div class="flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-xl border border-cyan-800/60 font-mono text-cyan-400 shadow-inner">
+        <!-- BPM -->
+        <div class="flex items-center gap-1 text-rose-400 font-mono text-[11px] md:text-xs font-bold">
+          <i class="fa-solid fa-heart-pulse animate-bounce text-rose-500"></i>
+          <span><span id="headerBpm">148</span><span class="text-[9px] text-slate-400 font-normal">BPM</span></span>
+        </div>
+
+        <div class="h-3 w-px bg-slate-800"></div>
+
+        <!-- Temp -->
+        <div class="flex items-center gap-1 text-amber-400 font-mono text-[11px] md:text-xs font-bold">
+          <i class="fa-solid fa-temperature-half text-amber-500"></i>
+          <span><span id="headerTemp">39.8</span><span class="text-[9px] text-slate-400 font-normal">°C</span></span>
+        </div>
+
+        <div class="h-3 w-px bg-slate-800 hidden sm:block"></div>
+
+        <!-- Cronómetro -->
+        <div class="flex items-center gap-1 text-cyan-300 font-mono text-[11px] md:text-xs font-bold bg-cyan-950/60 px-2 py-0.5 rounded-lg border border-cyan-800/50">
           <i class="fa-solid fa-stopwatch text-cyan-400"></i>
-          <span id="timerDisplay" class="font-bold text-sm md:text-base tracking-widest">35:00</span>
+          <span id="headerTimer">35:00</span>
         </div>
+      </div>
 
-        <button id="soundToggleBtn" onclick="toggleAudio()" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 flex items-center justify-center transition shadow" title="Activar/Silenciar sonido">
-          <i id="soundIcon" class="fa-solid fa-volume-xmark"></i>
+      <!-- Botones Rápidos (Dossier, Audio, Ayuda) -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <!-- Botón Biblioteca Forense (Dossier interactivo) -->
+        <button onclick="toggleDossierModal()" class="touch-btn h-9 px-2.5 md:px-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white flex items-center gap-1.5 text-xs font-bold shadow-lg shadow-amber-600/25 border border-amber-500/50" title="Abrir Dossier de Estudio (Lectura)">
+          <i class="fa-solid fa-book-medical text-amber-200"></i>
+          <span class="hidden md:inline font-tech tracking-wider uppercase">Dossier</span>
         </button>
 
-        <button onclick="openHelpModal()" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 border border-amber-600/60 text-amber-400 flex items-center justify-center transition shadow" title="Guía del Investigador">
-          <i class="fa-solid fa-folder-open"></i>
+        <!-- Botón Silenciar / Sonido Web Audio -->
+        <button id="soundBtn" onclick="toggleSound()" class="touch-btn w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-400 flex items-center justify-center border border-slate-700/80 shadow" title="Activar/Desactivar efectos sonoros">
+          <i id="soundIcon" class="fa-solid fa-volume-xmark text-xs"></i>
+        </button>
+
+        <!-- Menú de opciones / Reinicio -->
+        <button onclick="confirmRestartGame()" class="touch-btn w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 flex items-center justify-center border border-slate-700/80 shadow" title="Reiniciar investigación">
+          <i class="fa-solid fa-rotate-left text-xs"></i>
         </button>
       </div>
+
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-5">
-    <div class="mb-5">
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
-        <!-- Sala 1 -->
-        <button onclick="switchRoom(1)" id="roomTab1" class="room-tab p-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-left transition relative overflow-hidden group active-room-tab">
-          <div class="text-[10px] font-tech uppercase tracking-wider text-slate-400 flex justify-between items-center">
-            <span>FASE 01</span>
-            <span id="roomStatus1" class="text-cyan-400 font-bold"><i class="fa-solid fa-lock-open"></i></span>
+  <!-- ========================================================================= -->
+  <!-- BARRA HORIZONTAL DE FASES (SCROLLABLE TIMELINE COMPACTO)                   -->
+  <!-- ========================================================================= -->
+  <nav class="max-w-7xl mx-auto px-3 md:px-6 pt-3 pb-1">
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+      <!-- Fase 1 -->
+      <button onclick="switchRoom(1)" id="tabPhase1" class="phase-pill active touch-btn flex-shrink-0 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-left transition flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-[10px] font-mono font-bold text-cyan-300">
+          01
+        </div>
+        <div class="leading-tight">
+          <div class="text-[9px] font-tech text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <span>FASE 1</span>
+            <span id="tabStatus1" class="text-cyan-400"><i class="fa-solid fa-lock-open"></i></span>
           </div>
-          <div class="font-semibold text-xs md:text-sm text-slate-200 mt-0.5 truncate">El Escritorio Caótico</div>
-          <div class="text-[10px] text-slate-400 truncate">Bebida Estimulante</div>
-        </button>
+          <div class="text-xs font-semibold text-slate-200">Bebidas Energéticas</div>
+        </div>
+      </button>
 
-        <!-- Sala 2 -->
-        <button onclick="switchRoom(2)" id="roomTab2" class="room-tab p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-left transition relative overflow-hidden group opacity-60">
-          <div class="text-[10px] font-tech uppercase tracking-wider text-slate-400 flex justify-between items-center">
-            <span>FASE 02</span>
-            <span id="roomStatus2" class="text-slate-500"><i class="fa-solid fa-lock"></i></span>
+      <!-- Fase 2 -->
+      <button onclick="switchRoom(2)" id="tabPhase2" class="phase-pill touch-btn opacity-60 flex-shrink-0 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-left transition flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] font-mono font-bold text-slate-400">
+          02
+        </div>
+        <div class="leading-tight">
+          <div class="text-[9px] font-tech text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <span>FASE 2</span>
+            <span id="tabStatus2" class="text-slate-500"><i class="fa-solid fa-lock"></i></span>
           </div>
-          <div class="font-semibold text-xs md:text-sm text-slate-200 mt-0.5 truncate">El Alijo Andino</div>
-          <div class="text-[10px] text-slate-400 truncate">Identificación de Sustancia</div>
-        </button>
+          <div class="text-xs font-semibold text-slate-200">Coca vs Cocaína</div>
+        </div>
+      </button>
 
-        <!-- Sala 3 -->
-        <button onclick="switchRoom(3)" id="roomTab3" class="room-tab p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-left transition relative overflow-hidden group opacity-60">
-          <div class="text-[10px] font-tech uppercase tracking-wider text-slate-400 flex justify-between items-center">
-            <span>FASE 03</span>
-            <span id="roomStatus3" class="text-slate-500"><i class="fa-solid fa-lock"></i></span>
+      <!-- Fase 3 -->
+      <button onclick="switchRoom(3)" id="tabPhase3" class="phase-pill touch-btn opacity-60 flex-shrink-0 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-left transition flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] font-mono font-bold text-slate-400">
+          03
+        </div>
+        <div class="leading-tight">
+          <div class="text-[9px] font-tech text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <span>FASE 3</span>
+            <span id="tabStatus3" class="text-slate-500"><i class="fa-solid fa-lock"></i></span>
           </div>
-          <div class="font-semibold text-xs md:text-sm text-slate-200 mt-0.5 truncate">La Confitería Botánica</div>
-          <div class="text-[10px] text-slate-400 truncate">Comestibles & Fitocannabinoide</div>
-        </button>
+          <div class="text-xs font-semibold text-slate-200">Cannabis & Edibles</div>
+        </div>
+      </button>
 
-        <!-- Sala 4 -->
-        <button onclick="switchRoom(4)" id="roomTab4" class="room-tab p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-left transition relative overflow-hidden group opacity-60">
-          <div class="text-[10px] font-tech uppercase tracking-wider text-slate-400 flex justify-between items-center">
-            <span>FASE 04</span>
-            <span id="roomStatus4" class="text-slate-500"><i class="fa-solid fa-lock"></i></span>
+      <!-- Fase 4 -->
+      <button onclick="switchRoom(4)" id="tabPhase4" class="phase-pill touch-btn opacity-60 flex-shrink-0 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-left transition flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] font-mono font-bold text-slate-400">
+          04
+        </div>
+        <div class="leading-tight">
+          <div class="text-[9px] font-tech text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <span>FASE 4</span>
+            <span id="tabStatus4" class="text-slate-500"><i class="fa-solid fa-lock"></i></span>
           </div>
-          <div class="font-semibold text-xs md:text-sm text-slate-200 mt-0.5 truncate">La Barra de la Fiesta</div>
-          <div class="text-[10px] text-slate-400 truncate">El Depresor & Cinética Cero</div>
-        </button>
+          <div class="text-xs font-semibold text-slate-200">Alcohol & Cinética 0</div>
+        </div>
+      </button>
 
-        <!-- Sala 5 -->
-        <button onclick="switchRoom(5)" id="roomTab5" class="room-tab p-2.5 rounded-xl border border-slate-800 bg-slate-900/40 text-left transition relative overflow-hidden group opacity-60 col-span-2 sm:col-span-1">
-          <div class="text-[10px] font-tech uppercase tracking-wider text-slate-400 flex justify-between items-center">
-            <span>FASE 05</span>
-            <span id="roomStatus5" class="text-slate-500"><i class="fa-solid fa-shield-halved"></i></span>
+      <!-- Fase 5 -->
+      <button onclick="switchRoom(5)" id="tabPhase5" class="phase-pill touch-btn opacity-60 flex-shrink-0 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-left transition flex items-center gap-2">
+        <div class="w-6 h-6 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-[10px] font-mono font-bold text-slate-400">
+          05
+        </div>
+        <div class="leading-tight">
+          <div class="text-[9px] font-tech text-slate-400 uppercase tracking-widest flex items-center gap-1">
+            <span>FASE 5</span>
+            <span id="tabStatus5" class="text-slate-500"><i class="fa-solid fa-heart-pulse"></i></span>
           </div>
-          <div class="font-semibold text-xs md:text-sm text-amber-300 mt-0.5 truncate">Unidad de Reanimación</div>
-          <div class="text-[10px] text-slate-400 truncate">Protocolo y Antídoto</div>
-        </button>
-      </div>
+          <div class="text-xs font-semibold text-amber-300">Reanimación UCI</div>
+        </div>
+      </button>
     </div>
+  </nav>
 
-    <div id="introScreen" class="glass-panel rounded-2xl p-6 md:p-8 border border-cyan-900/60 shadow-2xl relative overflow-hidden mb-6">
-      <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-      
+  <!-- ========================================================================= -->
+  <!-- CONTENEDOR PRINCIPAL DEL JUEGO                                             -->
+  <!-- ========================================================================= -->
+  <main class="max-w-7xl mx-auto px-3 md:px-6 py-3">
+
+    <!-- PANTALLA INTRODUCTORIA (EXPEDIENTE FORENSE) -->
+    <section id="introScreen" class="glass-card rounded-2xl p-5 md:p-8 border border-cyan-900/60 shadow-2xl relative overflow-hidden mb-6">
+      <div class="absolute -right-24 -bottom-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
       <div class="flex flex-col lg:flex-row items-center gap-6">
-        <div class="w-full lg:w-2/3">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-800 text-cyan-400 text-xs font-tech font-bold uppercase tracking-wider mb-3">
-            <i class="fa-solid fa-biohazard text-amber-400"></i> Expediente Médico de Urgencia • Hradec Králové
+        <div class="w-full lg:w-2/3 space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/90 border border-cyan-800 text-cyan-400 text-xs font-tech font-bold uppercase tracking-wider">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Expediente Clínico de Urgencia • Praga #CZ-892
           </div>
-          <h2 class="text-2xl md:text-3xl font-display font-extrabold text-white mb-3">
+
+          <h2 class="text-2xl md:text-3xl lg:text-4xl font-display font-extrabold text-white leading-tight">
             EL COLAPSO DE MATEO RAMOS EN PRAGA
           </h2>
-          <p class="text-slate-300 text-sm md:text-base leading-relaxed mb-4">
-            <strong>Mateo Ramos (19 años, 64 kg)</strong> es un brillante estudiante de intercambio en la Facultad de Medicina y Bioquímica de la Universidad Carolina. 
-            Tras 48 horas continuas sin dormir preparando su examen final y asistir anoche a una fiesta universitaria multicultural, su compañero de piso lo halló desmayado en su escritorio con taquicardia severa (148 BPM), temblores incontrolables, fiebre de 39.8°C y confusión mental.
+
+          <p class="text-slate-300 text-sm md:text-base leading-relaxed">
+            <strong>Mateo Ramos (19 años, 64 kg)</strong>, estudiante universitario de intercambio en Praga, fue hallado inconsciente sobre su escritorio con taquicardia severa (<strong>148 BPM</strong>), temblor de extremidades, diaforesis (sudoración fría), fiebre maligna de <strong>39.8°C</strong> y midriasis reactiva.
           </p>
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 text-xs md:text-sm text-slate-300 mb-5 space-y-2">
-            <p class="font-semibold text-cyan-300 flex items-center gap-2">
-              <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Misión del Equipo Forense:
+
+          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 text-xs md:text-sm text-slate-300 space-y-2.5">
+            <div class="font-bold text-cyan-300 flex items-center gap-2">
+              <i class="fa-solid fa-user-doctor text-cyan-400"></i> Protocolo para los Equipos Forenses:
+            </div>
+            <p>
+              En la habitación y en la ropa de Mateo se incautaron latas de bebidas energéticas, paquetes sospechosos de plantas y polvos, comestibles de repostería y vasos de la fiesta.
             </p>
-            <p>Debes analizar la evidencia real incautada en su habitación y fiesta (tickets de compra, muestras de polvo vegetal y químico, envoltorios de dulces, chat de WhatsApp y tablas toxicológicas).</p>
-            <p class="text-amber-200"><strong>Importante:</strong> Las respuestas NO están dadas en la pantalla. Deberás consultar tus <em>2 Dossiers de Estudio</em> ("El peligro de las bebidas energéticas" y "La Toxicología de productos ancestrales") para identificar las sustancias exactas, calcular dosis y deducir los códigos numéricos antes de que su corazón entre en fibrilación ventricular.</p>
+            <p class="text-amber-200">
+              💡 <strong>Herramienta Clave:</strong> No necesitas adivinar. Pulsa el botón dorado <strong class="text-white bg-amber-700/60 px-1.5 py-0.5 rounded"><i class="fa-solid fa-book-medical mr-1"></i>DOSSIER</strong> en la barra superior en cualquier momento para consultar los documentos oficiales del caso (mecanismos, fórmulas, dosis tóxicas y datos de las 16 preguntas Kahoot).
+            </p>
           </div>
-          <div class="flex flex-wrap gap-3">
-            <button onclick="startGame()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-bold text-sm tracking-wider shadow-lg shadow-cyan-500/30 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="startGame()" class="touch-btn px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-bold text-xs md:text-sm tracking-wider shadow-lg shadow-cyan-500/30 flex items-center gap-2">
               <i class="fa-solid fa-play"></i> INICIAR INVESTIGACIÓN FORENSE
             </button>
-            <button onclick="openHelpModal()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs tracking-wider border border-slate-700 transition">
-              <i class="fa-solid fa-book-open mr-1"></i> VER REGLAS Y DOSSIER
+            <button onclick="toggleDossierModal()" class="touch-btn px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 font-tech font-bold text-xs tracking-wider border border-amber-600/50 flex items-center gap-2">
+              <i class="fa-solid fa-book-open"></i> ABRIR DOSSIER DE ESTUDIO
             </button>
           </div>
         </div>
 
-        <!-- Ficha médica de Mateo -->
+        <!-- Ficha Médica Resumida -->
         <div class="w-full lg:w-1/3 flex justify-center">
           <div class="w-full max-w-xs p-5 rounded-2xl bg-gradient-to-b from-slate-950 to-slate-900 border border-slate-800 shadow-2xl text-center">
             <div class="w-20 h-20 mx-auto rounded-2xl bg-cyan-950/80 border-2 border-cyan-400/50 flex items-center justify-center text-cyan-400 text-3xl mb-3 shadow-inner">
-              <i class="fa-solid fa-user-doctor"></i>
+              <i class="fa-solid fa-user-injured"></i>
             </div>
             <h3 class="font-display font-bold text-white text-base">Mateo Ramos</h3>
-            <p class="text-xs text-slate-400">Estudiante Latinoamericano • 19 años</p>
+            <p class="text-xs text-slate-400">Estudiante Latinoamericano • 19 años • 64 kg</p>
+            
             <div class="mt-4 pt-3 border-t border-slate-800 text-left text-xs space-y-2">
               <div class="flex justify-between">
-                <span class="text-slate-400">Diagnóstico Presuntivo:</span>
+                <span class="text-slate-400">Diagnóstico:</span>
                 <span class="text-rose-400 font-bold">Sobredosis Polimaterial</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Riesgo Inmediato:</span>
-                <span class="text-amber-400">Vasoespasmo e Infarto</span>
+                <span class="text-slate-400">Riesgo Vital:</span>
+                <span class="text-amber-400 font-bold">Isquemia & Vasoespasmo</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-slate-400">Ventana terapéutica:</span>
-                <span class="text-cyan-400 font-mono font-bold">35 minutos</span>
+                <span class="text-slate-400">Tiempo Límite:</span>
+                <span class="text-cyan-400 font-mono font-bold">35 Minutos</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- ========================================================================= -->
-    <!-- SALA 1: EL ESCRITORIO CAÓTICO (Bebida Estimulante)                        -->
+    <!-- SALA 1: EL ESCRITORIO CAÓTICO (Bebidas Estimulantes)                      -->
     <!-- ========================================================================= -->
-    <div id="room1" class="room-section glass-panel rounded-2xl p-5 md:p-8 border border-slate-800 shadow-2xl">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4 mb-6">
+    <section id="room1" class="room-view glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
+      <!-- Encabezado de la fase -->
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 mb-5">
         <div>
-          <span class="text-xs font-tech text-cyan-400 uppercase tracking-widest">EVIDENCIA #01 • DORMITORIO ESTUDIANTIL</span>
-          <h2 class="text-xl md:text-2xl font-display font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-bolt text-amber-400"></i> Fase 1: El Escritorio Caótico (Bebidas Estimulantes)
+          <span class="text-xs font-tech text-cyan-400 uppercase tracking-widest flex items-center gap-1.5">
+            <i class="fa-solid fa-magnifying-glass"></i> Evidencia #01 • Habitación Estudiantil
+          </span>
+          <h2 class="text-lg md:text-2xl font-display font-bold text-white mt-0.5">
+            Fase 1: El Escritorio Caótico (Bebidas Estimulantes)
           </h2>
         </div>
-        <div class="px-3 py-1 rounded-lg bg-amber-950/60 border border-amber-800/80 text-amber-300 text-xs font-mono">
-          <i class="fa-solid fa-lock mr-1"></i> CANDADO DIGITAL DEL CAJÓN: 3 DÍGITOS
+        <div class="px-3 py-1.5 rounded-xl bg-amber-950/70 border border-amber-800 text-amber-300 text-xs font-mono font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-lock"></i> CANDADO DIGITAL: 3 DÍGITOS
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="lg:col-span-2 space-y-4">
-          <!-- Evidencias encontradas -->
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
-            <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm">
-              <i class="fa-solid fa-magnifying-glass"></i> Evidencias recolectadas en el escritorio de Mateo:
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <!-- Evidencia A: Ticket de compra -->
-              <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Evidencia A</span>
-                <p class="font-semibold text-slate-200">Ticket de Supermercado "Albert Potraviny" (Praga):</p>
-                <ul class="text-slate-400 mt-1 space-y-0.5 font-mono text-[11px]">
-                  <li>• 1x Café Americano takeaway (240 ml)</li>
-                  <li>• 3x Latas grandes de bebida energizante de 500 ml c/u (con logo de garras verdes)</li>
-                </ul>
-              </div>
-
-              <!-- Evidencia B: Chat de WhatsApp -->
-              <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Evidencia B</span>
-                <p class="font-semibold text-slate-200">Último mensaje de Mateo (02:45 AM):</p>
-                <p class="text-slate-300 italic mt-1 text-[11px]">
-                  "Me tomé las 3 latas completas de 500 ml para no dormirme con Farmacología... Tengo las manos temblando, el corazón a mil y me duele el pecho. El código del cajón de apuntes lo formé con los datos de mi lectura..."
-                </p>
-              </div>
-            </div>
-
-            <!-- Evidencia C: Lata analizada -->
-            <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
-              <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Evidencia C</span>
-              <p class="text-slate-300">
-                <strong>Análisis de la lata de 500 ml:</strong> La etiqueta frontal declara 160 mg de cafeína sintética, pero en la letra pequeña de ingredientes figura <em>extracto de semilla de guaraná</em> y <em>taurina</em>.
-              </p>
-            </div>
-          </div>
-
-          <!-- Pistas para deducir el código numérico [D1 - D2 - D3] -->
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-cyan-900/50 space-y-3">
-            <h4 class="text-xs font-tech uppercase tracking-widest text-cyan-300 font-bold flex items-center gap-2">
-              <i class="fa-solid fa-key"></i> INSTRUCCIONES PARA OBTENER EL CÓDIGO [D1 - D2 - D3]:
-            </h4>
-            <p class="text-xs text-slate-300">
-              Consulta tu <strong>Dossier de Bebidas Energéticas</strong> para resolver las siguientes 3 deducciones toxicológicas:
-            </p>
-
-            <div class="space-y-2 text-xs">
-              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-cyan-400 font-bold font-mono">DÍGITO 1 (Equivalencia de latas):</span>
-                Revisa la comparativa de cafeína en tu dossier. ¿A cuántas latas enteras estándar de Coca-Cola equivale aproximadamente la cafeína pura de <strong>UNA sola lata de Monster de 500 ml</strong>?
-                <span class="block text-slate-400 text-[11px] mt-1">→ Dicho número entero de latas de refresco es el primer dígito.</span>
-              </div>
-
-              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-amber-400 font-bold font-mono">DÍGITO 2 (Umbral de Taquicardia y Riesgo):</span>
-                Según la sección de <em>"¿A partir de qué dosis empieza a ser peligrosa y cuántas latas representan?"</em>, ¿cuál es el número mínimo de latas de Monster seguidas con el cual una persona entra en zona de riesgo con taquicardia, temblor de manos y ansiedad extrema?
-                <span class="block text-slate-400 text-[11px] mt-1">→ Ese número mínimo de latas es el segundo dígito.</span>
-              </div>
-
-              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-purple-400 font-bold font-mono">DÍGITO 3 (Potencia botánica del Guaraná):</span>
-                Revisa la sección de Guaraná en tu lectura. ¿Cuántas veces más concentrada en cafeína natural es la semilla de guaraná respecto al grano de café?
-                <span class="block text-slate-400 text-[11px] mt-1">→ Tu dossier indica un rango (de X a Y veces más concentrada). Toma el <strong>valor superior</strong> de ese rango como tu tercer dígito.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Teclado interactivo Sala 1 -->
-        <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-slate-950 border border-cyan-800/80 shadow-inner">
-          <div class="w-12 h-12 rounded-2xl bg-cyan-950 border border-cyan-500/50 flex items-center justify-center text-cyan-400 text-xl mb-3 shadow">
-            <i class="fa-solid fa-vault"></i>
-          </div>
-          <span class="text-xs font-tech text-slate-400 uppercase tracking-widest mb-1">CÓDIGO DEL CAJÓN</span>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Columna de Evidencias e Inspección Interactiva (8 cols) -->
+        <div class="lg:col-span-7 xl:col-span-8 space-y-4">
           
-          <div class="w-full max-w-[200px] h-14 bg-slate-900 border-2 border-cyan-500 rounded-xl flex items-center justify-center font-mono text-2xl tracking-[0.4em] text-cyan-300 font-bold shadow-lg shadow-cyan-950 mb-4">
-            <span id="codeDisplay1">---</span>
+          <!-- Evidencias encontradas -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <!-- Evidencia A: Ticket de supermercado -->
+            <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 font-mono font-bold text-[10px]">EVIDENCIA A</span>
+                <span class="text-[10px] text-slate-500 font-mono">Albert Potraviny • Praga</span>
+              </div>
+              <p class="font-bold text-slate-200">Ticket de Compra Reciente:</p>
+              <ul class="text-slate-300 font-mono space-y-1 text-[11px] bg-slate-900/80 p-2.5 rounded-lg border border-slate-800/80">
+                <li>• 1x Café Americano (240 ml)</li>
+                <li>• 3x Monster Energy Green (500 ml c/u)</li>
+                <li class="text-slate-500 text-[10px]">• Total: 168.00 CZK (Pagado con tarjeta)</li>
+              </ul>
+            </div>
+
+            <!-- Evidencia B: Chat de WhatsApp de Mateo -->
+            <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-bold text-[10px]">EVIDENCIA B</span>
+                <span class="text-[10px] text-slate-500 font-mono">WhatsApp • 02:45 AM</span>
+              </div>
+              <p class="font-bold text-slate-200">Mensaje enviado a su compañero:</p>
+              <div class="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-900/60 text-slate-300 text-[11px] italic leading-relaxed">
+                "Me tomé 3 Monsters seguidas de 500 ml para no dormirme estudiando. Tengo las manos temblando, taquicardia brutal y mareo. El candado del cajón tiene los números de la lectura..."
+              </div>
+            </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-2 w-full max-w-[200px] mb-3">
-            <button onclick="pressKeypad(1, '1')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">1</button>
-            <button onclick="pressKeypad(1, '2')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">2</button>
-            <button onclick="pressKeypad(1, '3')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">3</button>
-            <button onclick="pressKeypad(1, '4')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">4</button>
-            <button onclick="pressKeypad(1, '5')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">5</button>
-            <button onclick="pressKeypad(1, '6')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">6</button>
-            <button onclick="pressKeypad(1, '7')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">7</button>
-            <button onclick="pressKeypad(1, '8')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">8</button>
-            <button onclick="pressKeypad(1, '9')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">9</button>
-            <button onclick="clearKeypad(1)" class="py-2.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 font-mono text-xs text-rose-300 font-bold border border-rose-800 transition">C</button>
-            <button onclick="pressKeypad(1, '0')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">0</button>
-            <button onclick="submitRoomCode(1)" class="py-2.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 font-mono text-xs text-emerald-300 font-bold border border-emerald-800 transition">OK</button>
+          <!-- Inspector Interactivo de la Lata de Monster -->
+          <div class="p-4 rounded-xl bg-slate-950/90 border border-cyan-900/60 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="font-tech text-cyan-300 uppercase tracking-wider font-bold text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-can-food text-cyan-400"></i> Evidencia C: Análisis Toxicológico de la Lata (500 ml)
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Contenido: 500 ml</span>
+            </div>
+
+            <!-- Pestañas del inspector de la lata -->
+            <div class="grid grid-cols-3 gap-1.5 text-xs font-semibold">
+              <button onclick="inspectCanTab('front')" id="canTabBtn_front" class="p-2 rounded-lg bg-cyan-950 border border-cyan-500 text-cyan-300 text-center">
+                Frontal (Cafeína)
+              </button>
+              <button onclick="inspectCanTab('guarana')" id="canTabBtn_guarana" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-center">
+                Guaraná & Taurina
+              </button>
+              <button onclick="inspectCanTab('coca')" id="canTabBtn_coca" class="p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-center">
+                Equivalencias
+              </button>
+            </div>
+
+            <!-- Contenido dinámico del inspector -->
+            <div id="canContentArea" class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 space-y-1.5">
+              <p><strong>Declaración frontal:</strong> Contiene <span class="text-cyan-400 font-bold font-mono">160 mg de cafeína sintética pura</span> por lata de 500 ml.</p>
+              <p class="text-[11px] text-slate-400">Mecanismo: Bloquea competitivamente los receptores de adenosina en el cerebro engañando la fatiga y forzando liberación de adrenalina.</p>
+            </div>
           </div>
 
-          <p id="roomFeedback1" class="text-xs text-center min-h-[20px] text-slate-400 font-tech"></p>
+          <!-- Pistas para descifrar el código D1 - D2 - D3 -->
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3 text-xs">
+            <h4 class="font-tech uppercase tracking-widest text-amber-300 font-bold flex items-center justify-between">
+              <span><i class="fa-solid fa-key text-amber-400 mr-1.5"></i> INSTRUCCIONES DEL CANDADO [ D1 - D2 - D3 ]:</span>
+              <button onclick="openDossierTab('bebidas')" class="text-[11px] text-cyan-400 hover:underline">
+                <i class="fa-solid fa-book mr-1"></i>Ver en Dossier →
+              </button>
+            </h4>
+
+            <div class="space-y-2">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+                <span class="text-cyan-400 font-bold font-mono">DÍGITO 1 (Equivalencia en latas de Coca-Cola):</span>
+                Revisa en tu dossier cuántas latas enteras de Coca-Cola (34 mg c/u) equivalen a la cafeína de <strong>UNA lata de Monster de 500 ml (160 mg)</strong>: 160 mg / 34 mg ≈ 4.7 latas.
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ El número entero más cercano (alrededor de 5 latas) es el primer dígito.</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+                <span class="text-amber-400 font-bold font-mono">DÍGITO 2 (Umbral de taquicardia y temblor):</span>
+                Según la sección <em>"Dosis de riesgo y malestar (500 a 600 mg)"</em>, ¿cuál es el número mínimo de latas de Monster seguidas con el cual una persona entra en riesgo agudo de taquicardia y ansiedad?
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ Dicho número de latas (3 a 4 latas) toma su valor mínimo: ese es el segundo dígito.</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+                <span class="text-purple-400 font-bold font-mono">DÍGITO 3 (Potencia botánica del Guaraná):</span>
+                Revisa la sección de Guaraná. ¿Cuántas veces más concentrada en cafeína es la semilla de guaraná respecto a un grano de café tradicional?
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ El dossier indica un rango: "3 a 4 veces más concentrada". Toma el <strong>valor superior</strong> del rango como tu tercer dígito.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna del Teclado Numérico Táctil Ergonómico (4 cols) -->
+        <div class="lg:col-span-5 xl:col-span-4 flex flex-col items-center justify-start">
+          <div class="w-full max-w-xs p-5 rounded-2xl bg-slate-950 border-2 border-cyan-900/80 shadow-2xl space-y-4">
+            
+            <div class="text-center">
+              <span class="text-[10px] font-tech uppercase tracking-widest text-slate-400 block mb-1">CANDADO DEL CAJÓN</span>
+              <!-- Display digital -->
+              <div class="h-14 rounded-xl bg-slate-900 border-2 border-cyan-500/80 flex items-center justify-center font-mono text-2xl tracking-[0.4em] text-cyan-300 font-black shadow-lg shadow-cyan-950">
+                <span id="pinDisplay1">---</span>
+              </div>
+            </div>
+
+            <!-- Teclado 3x4 táctil -->
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="pressKey(1, '1')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">1</button>
+              <button onclick="pressKey(1, '2')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">2</button>
+              <button onclick="pressKey(1, '3')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">3</button>
+              
+              <button onclick="pressKey(1, '4')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">4</button>
+              <button onclick="pressKey(1, '5')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">5</button>
+              <button onclick="pressKey(1, '6')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">6</button>
+              
+              <button onclick="pressKey(1, '7')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">7</button>
+              <button onclick="pressKey(1, '8')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">8</button>
+              <button onclick="pressKey(1, '9')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">9</button>
+              
+              <button onclick="clearPin(1)" class="num-key touch-btn bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-sm font-tech">BORRAR</button>
+              <button onclick="pressKey(1, '0')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">0</button>
+              <button onclick="submitPin(1)" class="num-key touch-btn bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 text-sm font-tech">VALIDAR</button>
+            </div>
+
+            <!-- Feedback de error o acierto -->
+            <div id="pinFeedback1" class="text-xs text-center min-h-[24px] font-tech font-bold text-slate-400">
+              Ingresa los 3 dígitos deducidos
+            </div>
+
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- ========================================================================= -->
     <!-- SALA 2: EL ALIJO ANDINO (Hoja de Coca vs Clorhidrato de Cocaína)          -->
     <!-- ========================================================================= -->
-    <div id="room2" class="room-section hidden glass-panel rounded-2xl p-5 md:p-8 border border-slate-800 shadow-2xl">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4 mb-6">
+    <section id="room2" class="room-view hidden glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 mb-5">
         <div>
-          <span class="text-xs font-tech text-indigo-400 uppercase tracking-widest">EVIDENCIA #02 • MOCHILA DE VIAJE Y ROPA DE FIESTA</span>
-          <h2 class="text-xl md:text-2xl font-display font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-leaf text-emerald-400"></i> Fase 2: El Alijo Andino (Identificación Toxicológica)
+          <span class="text-xs font-tech text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
+            <i class="fa-solid fa-leaf"></i> Evidencia #02 • Mochila y Ropa de Fiesta
+          </span>
+          <h2 class="text-lg md:text-2xl font-display font-bold text-white mt-0.5">
+            Fase 2: El Alijo Andino (Hoja Tradicional vs Clorhidrato)
           </h2>
         </div>
-        <div class="px-3 py-1 rounded-lg bg-indigo-950/60 border border-indigo-800/80 text-indigo-300 text-xs font-mono">
-          <i class="fa-solid fa-fingerprint mr-1"></i> MATRIZ DE CROMATOGRAFÍA
+        <div class="px-3 py-1.5 rounded-xl bg-indigo-950/70 border border-indigo-800 text-indigo-300 text-xs font-mono font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-fingerprint"></i> ESPECTRÓMETRO TOXICOLÓGICO
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="lg:col-span-2 space-y-4">
-          <!-- Evidencias encontradas -->
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
-            <div class="flex items-center gap-2 text-indigo-300 font-bold text-sm">
-              <i class="fa-solid fa-vial-virus"></i> Muestras confiscadas por la policía universitaria:
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Evidencia y Cuestionario Forense (8 cols) -->
+        <div class="lg:col-span-8 space-y-4">
+          
+          <!-- Dos muestras incautadas -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1.5">
+              <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-bold text-[10px]">MUESTRA #1</span>
+              <p class="font-bold text-slate-200">En la maleta de viaje de Mateo:</p>
+              <p class="text-slate-300 text-[11px] leading-relaxed">
+                Hojas verdes secas enteras con restos de cal vegetal (llipta), identificadas como parte de la tradición ancestral del <em>acullico</em> o <em>mambeo</em> andino.
+              </p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-              <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Muestra #1</span>
-                <p class="font-semibold text-slate-200">En la maleta de viaje:</p>
-                <p class="text-slate-400 text-[11px] mt-1">
-                  Hojas verdes secas enteras con restos de cal vegetal (llipta), identificadas como parte de la tradición del <em>acullico</em> que Mateo trajo de su país andino.
-                </p>
-              </div>
-
-              <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
-                <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Muestra #2</span>
-                <p class="font-semibold text-slate-200">En el bolsillo de su chamarra de fiesta:</p>
-                <p class="text-slate-400 text-[11px] mt-1">
-                  Bolsita tipo ziploc con polvo blanco cristalino soluble y una credencial con restos de polvo en los bordes.
-                </p>
-              </div>
-            </div>
-
-            <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs text-slate-300">
-              <strong>Informe de Laboratorio:</strong> El ECG de Mateo muestra ensanchamiento del complejo QRS y signos de vasoespasmo coronario severo. ¿Cuál de las dos muestras provocó esta emergencia aguda?
+            <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1.5">
+              <span class="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-400 font-mono font-bold text-[10px]">MUESTRA #2</span>
+              <p class="font-bold text-slate-200">En el bolsillo de su chamarra de fiesta:</p>
+              <p class="text-slate-300 text-[11px] leading-relaxed">
+                Bolsita tipo ziploc con polvo blanco cristalino soluble en agua y residuos en el borde de una credencial universitaria.
+              </p>
             </div>
           </div>
 
-          <!-- Matriz de diagnóstico forense -->
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-indigo-900/50 space-y-4">
-            <h4 class="text-xs font-tech uppercase tracking-widest text-indigo-300 font-bold flex items-center gap-2">
-              <i class="fa-solid fa-dna"></i> COMPLETA EL REPORTE FORENSE (BASADO EN TU DOSSIER ANCESTRAL):
-            </h4>
+          <!-- Escáner Espectrométrico Interactivo -->
+          <div class="p-4 rounded-xl bg-slate-950/90 border border-indigo-900/60 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="font-tech text-indigo-300 uppercase tracking-wider font-bold text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-line text-indigo-400"></i> Simulación Cinética: Absorción Plasmática
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="runSpectrumScan('hojas')" id="specBtn_hojas" class="touch-btn px-2.5 py-1 rounded-lg bg-emerald-950 border border-emerald-500 text-emerald-300 text-xs font-semibold">
+                  Muestra 1 (Hojas)
+                </button>
+                <button onclick="runSpectrumScan('polvo')" id="specBtn_polvo" class="touch-btn px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-semibold">
+                  Muestra 2 (Polvo Blanco)
+                </button>
+              </div>
+            </div>
+
+            <div id="spectrumOutput" class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              <p class="text-emerald-300 font-semibold mb-1">Muestra #1: Hojas en Acullico</p>
+              <p class="text-[11px] text-slate-400">Absorción gástrica y mucosa lenta (pico en ~60 minutos). Concentración plasmática baja y sostenida que no satura receptores ni induce espasmo coronario.</p>
+            </div>
+          </div>
+
+          <!-- Cuestionario Forense de la Sala 2 -->
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="font-tech uppercase tracking-widest text-indigo-300 font-bold text-xs">
+                RESOLUCIÓN FORENSE (DOSSIER ANCESTRAL):
+              </h4>
+              <button onclick="openDossierTab('coca')" class="text-[11px] text-cyan-400 hover:underline">
+                <i class="fa-solid fa-book mr-1"></i>Ver en Dossier →
+              </button>
+            </div>
 
             <!-- Pregunta 2.1 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                1. ¿Qué forma física provocó el colapso y por qué los montañistas andinos no colapsan con el masticado de hojas?
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                1. ¿Por qué el masticado andino tradicional de hojas de coca no causa infartos ni la adicción destructiva del clorhidrato puro?
               </p>
               <div class="grid grid-cols-1 gap-2 text-xs">
-                <button onclick="selectOption(2, 'q1', 'A')" id="btn_2_q1_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>A)</strong> Colapsó por el <em>polvo blanco concentrado</em> (clorhidrato); las hojas en acullico liberan microcantidades muy lentas que no saturan el sistema de recompensa ni cierran coronarias.
+                <button onclick="selectQuiz(2, 'q1', 'A')" id="btn_2_q1_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>A)</strong> Libera microcantidades de absorción digestiva/mucosa muy lentas (pico a 60 min) sin disparar picos tóxicos en sangre.
                 </button>
-                <button onclick="selectOption(2, 'q1', 'B')" id="btn_2_q1_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Colapsó por las <em>hojas secas</em>, ya que la cal vegetal transforma las hojas en cianuro instantáneo.
+                <button onclick="selectQuiz(2, 'q1', 'B')" id="btn_2_q1_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Porque las hojas de coca no contienen ningún alcaloide químico activo.
                 </button>
               </div>
             </div>
 
             <!-- Pregunta 2.2 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                2. ¿Cuál es el transportador neuronal específico que la droga bloqueó como una "aspiradora descompuesta" provocando acumulación masiva de dopamina?
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                2. ¿Cuál es la "aspiradora neuronal" específica que la cocaína bloquea provocando una acumulación de dopamina de hasta 1,000% en la sinapsis?
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button onclick="selectOption(2, 'q2', 'A')" id="btn_2_q2_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
+                <button onclick="selectQuiz(2, 'q2', 'A')" id="btn_2_q2_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
                   <strong>A)</strong> El receptor de insulina hepático.
                 </button>
-                <button onclick="selectOption(2, 'q2', 'B')" id="btn_2_q2_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
+                <button onclick="selectQuiz(2, 'q2', 'B')" id="btn_2_q2_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
                   <strong>B)</strong> El transportador DAT (transportador de dopamina).
                 </button>
               </div>
             </div>
 
             <!-- Pregunta 2.3 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                3. ¿Qué canales iónicos bloquea en los cardiomiocitos causando el infarto y arritmia súbita en jóvenes sanos?
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                3. ¿Qué mecanismo cardíaco letal explica las arritmias malignas y el infarto fulminante en personas jóvenes por cocaína?
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button onclick="selectOption(2, 'q3', 'A')" id="btn_2_q3_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>A)</strong> Canales de Sodio (Nav) y cierre por espasmo coronario.
+                <button onclick="selectQuiz(2, 'q3', 'A')" id="btn_2_q3_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>A)</strong> Bloqueo de canales de sodio miocárdicos y cierre por vasoespasmo coronario.
                 </button>
-                <button onclick="selectOption(2, 'q3', 'B')" id="btn_2_q3_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Canales de agua osmótica de los glóbulos rojos.
+                <button onclick="selectQuiz(2, 'q3', 'B')" id="btn_2_q3_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Congelamiento instantáneo de los glóbulos rojos pulmonares.
                 </button>
               </div>
             </div>
+
           </div>
+
         </div>
 
-        <!-- Panel de verificación Sala 2 -->
-        <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-slate-950 border border-indigo-800/80 shadow-inner">
-          <div class="w-14 h-14 rounded-2xl bg-indigo-950/80 border border-indigo-500/50 flex items-center justify-center text-indigo-400 text-2xl mb-4 shadow">
-            <i class="fa-solid fa-microscope animate-pulse"></i>
-          </div>
-          <h4 class="font-display text-sm font-bold text-white mb-1">ANALIZADOR TOXICOLÓGICO</h4>
-          <p class="text-xs text-slate-400 text-center mb-5">
-            Selecciona las conclusiones correctas consultando tu dossier para desbloquear la Fase 3.
-          </p>
+        <!-- Panel de Validación Sala 2 (4 cols) -->
+        <div class="lg:col-span-4 flex flex-col items-center justify-start">
+          <div class="w-full max-w-xs p-5 rounded-2xl bg-slate-950 border border-indigo-800/80 shadow-2xl space-y-4 text-center">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-indigo-950 border border-indigo-500/50 flex items-center justify-center text-indigo-400 text-2xl shadow">
+              <i class="fa-solid fa-dna animate-pulse"></i>
+            </div>
+            
+            <h4 class="font-display font-bold text-white text-sm">ANALIZADOR FORENSE</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Selecciona las conclusiones toxicológicas fundamentadas en tu dossier para avanzar a la Fase 3.
+            </p>
 
-          <button onclick="verifyRoom2()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-tech font-bold text-sm tracking-wider shadow-lg transition transform hover:-translate-y-0.5">
-            <i class="fa-solid fa-shield-virus mr-1"></i> VALIDAR DIAGNÓSTICO
-          </button>
-          <p id="roomFeedback2" class="text-xs text-center mt-3 min-h-[20px] text-slate-400 font-tech"></p>
+            <button onclick="validateRoom2()" class="touch-btn w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-emerald-600 hover:from-indigo-500 hover:to-emerald-500 text-white font-tech font-bold text-sm tracking-wider shadow-lg shadow-indigo-950 transition">
+              <i class="fa-solid fa-shield-virus mr-1.5"></i> VALIDAR DIAGNÓSTICO
+            </button>
+
+            <div id="feedbackRoom2" class="text-xs min-h-[24px] font-tech font-bold text-slate-400">
+              Responde las 3 preguntas
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- ========================================================================= -->
     <!-- SALA 3: LA CONFITERÍA BOTÁNICA (Cannabis: THC vs CBD & Edibles)           -->
     <!-- ========================================================================= -->
-    <div id="room3" class="room-section hidden glass-panel rounded-2xl p-5 md:p-8 border border-slate-800 shadow-2xl">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4 mb-6">
+    <section id="room3" class="room-view hidden glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 mb-5">
         <div>
-          <span class="text-xs font-tech text-emerald-400 uppercase tracking-widest">EVIDENCIA #03 • PAPELERA DE LA FIESTA</span>
-          <h2 class="text-xl md:text-2xl font-display font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-cannabis text-emerald-400"></i> Fase 3: La Confitería Botánica (THC vs CBD & Comestibles)
+          <span class="text-xs font-tech text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
+            <i class="fa-solid fa-cannabis"></i> Evidencia #03 • Papelera de la Fiesta
+          </span>
+          <h2 class="text-lg md:text-2xl font-display font-bold text-white mt-0.5">
+            Fase 3: La Confitería Botánica (THC vs CBD & Comestibles)
           </h2>
         </div>
-        <div class="px-3 py-1 rounded-lg bg-emerald-950/60 border border-emerald-800/80 text-emerald-300 text-xs font-mono">
-          <i class="fa-solid fa-cookie-bite mr-1"></i> MATRIZ DE METABOLITOS HEPÁTICOS
+        <div class="px-3 py-1.5 rounded-xl bg-emerald-950/70 border border-emerald-800 text-emerald-300 text-xs font-mono font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-cookie-bite"></i> MATRIZ DE METABOLITOS HEPÁTICOS
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="lg:col-span-2 space-y-4">
-          <!-- Evidencia recolectada -->
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
-            <div class="flex items-center gap-2 text-emerald-300 font-bold text-sm">
-              <i class="fa-solid fa-box-open"></i> Evidencia incautada en la fiesta universitaria:
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Evidencia y Farmacocinética (8 cols) -->
+        <div class="lg:col-span-8 space-y-4">
+          
+          <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1.5 text-xs">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-bold text-[10px]">EVIDENCIA D</span>
+            <p class="font-bold text-slate-200">Envoltorio de "Space Gummies" (gomitas de repostería cannábica):</p>
+            <p class="text-slate-300 text-[11px] leading-relaxed italic bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+              "Mateo comió 1 gomita a las 11:00 PM; a las 11:30 PM como 'no sentía nada' se comió 3 más pensando que eran inofensivas. Hacia la 01:00 AM entró en taquicardia violenta, vómito incontrolable y ataques de terror psicológico".
+            </p>
+          </div>
+
+          <!-- Simulador Farmacocinético Interactivo: Inhalado vs Comestible -->
+          <div class="p-4 rounded-xl bg-slate-950/90 border border-emerald-900/60 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="font-tech text-emerald-300 uppercase tracking-wider font-bold text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-flask-vial text-emerald-400"></i> Simulador: ¿Qué ocurre en el Hígado?
+              </span>
+              <span class="text-[10px] text-slate-400 font-mono">Metabolismo de Primer Paso</span>
             </div>
-            
-            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-              <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Evidencia D</span>
-              <p class="font-semibold text-slate-200">Envoltorio artesanal de "Space Gummies" (gomitas de marihuana):</p>
-              <p class="text-slate-300 italic mt-1 text-[11px]">
-                En el chat de los estudiantes se lee: "Un compañero trajo gomitas de Amsterdam. Mateo se comió una a las 11:00 PM; a las 11:30 PM decía que 'no sentía nada' y se comió 3 más. Dos horas después estaba vomitando en el suelo con taquicardia violenta y ataques de pánico".
-              </p>
+
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs text-slate-300 font-mono">
+                <span>Tiempo transcurrido: <strong id="sliderTimeVal" class="text-cyan-400 font-bold">60 minutos</strong></span>
+                <span id="sliderMetaboliteVal" class="text-amber-400 font-bold text-[11px]">Transformando en 11-OH-THC</span>
+              </div>
+              <input type="range" id="edibleSlider" min="10" max="150" value="60" oninput="updateEdibleSim(this.value)" class="w-full">
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                <span>10 min (Inerte en estómago)</span>
+                <span>60 min (Pico en hígado)</span>
+                <span>120 min (Explosión masiva)</span>
+              </div>
+            </div>
+
+            <div id="edibleSimText" class="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300">
+              A los 60 min, el THC cruza el sistema porta hepático donde la enzima CYP2C9 lo oxigena creando <strong>11-hidroxi-THC</strong>, una molécula hasta 4 veces más potente que cruza la barrera hematoencefálica con facilidad inaudita.
             </div>
           </div>
 
-          <!-- Desafío farmacocinético -->
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-emerald-900/50 space-y-4">
-            <h4 class="text-xs font-tech uppercase tracking-widest text-emerald-300 font-bold flex items-center gap-2">
-              <i class="fa-solid fa-flask-vial"></i> RESUELVE EL DILEMA FITOCANNABINOIDE (DOSSIER ANCESTRAL):
-            </h4>
+          <!-- Cuestionario Sala 3 -->
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="font-tech uppercase tracking-widest text-emerald-300 font-bold text-xs">
+                RESOLUCIÓN FITOCANNABINOIDE (DOSSIER ANCESTRAL):
+              </h4>
+              <button onclick="openDossierTab('cannabis')" class="text-[11px] text-cyan-400 hover:underline">
+                <i class="fa-solid fa-book mr-1"></i>Ver en Dossier →
+              </button>
+            </div>
 
             <!-- Pregunta 3.1 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                1. ¿Por qué comer comestibles (brownies, gomitas) es una trampa toxicológica mucho más peligrosa que fumar la misma sustancia?
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                1. ¿Por qué comer comestibles cannábicos (edibles) es una trampa que suele causar sobredosis severas a diferencia de fumar?
               </p>
               <div class="grid grid-cols-1 gap-2 text-xs">
-                <button onclick="selectOption(3, 'q1', 'A')" id="btn_3_q1_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>A)</strong> Tarda 45 a 120 min en digerirse; la persona se redosifica pensando que no funcionó, y el hígado convierte el THC en <em>11-hidroxi-THC</em> (hasta 4 veces más potente).
+                <button onclick="selectQuiz(3, 'q1', 'A')" id="btn_3_q1_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>A)</strong> Tarda 45 a 120 min en digerirse; al redosificarse, el hígado convierte el THC en <em>11-hidroxi-THC</em> (hasta 4 veces más potente).
                 </button>
-                <button onclick="selectOption(3, 'q1', 'B')" id="btn_3_q1_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Porque los comestibles siempre se cocinan con veneno para ratas por error.
+                <button onclick="selectQuiz(3, 'q1', 'B')" id="btn_3_q1_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Porque los comestibles destruyen el estómago con ácido clorhídrico puro.
                 </button>
               </div>
             </div>
 
             <!-- Pregunta 3.2 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                2. En la historia médica de Charlotte Figi, ¿cuál fue el compuesto que salvó su vida al reducir sus convulsiones sin provocarle ningún efecto psicoactivo ("colocón")?
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                2. En el caso de Charlotte Figi, ¿qué compuesto salvó su vida al reducir sus convulsiones sin intoxicarla ni causarle efecto psicoactivo?
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button onclick="selectOption(3, 'q2', 'A')" id="btn_3_q2_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>A)</strong> El THC puro fumado a altas dosis.
+                <button onclick="selectQuiz(3, 'q2', 'A')" id="btn_3_q2_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>A)</strong> El THC puro a dosis elevadas.
                 </button>
-                <button onclick="selectOption(3, 'q2', 'B')" id="btn_3_q2_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
+                <button onclick="selectQuiz(3, 'q2', 'B')" id="btn_3_q2_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
                   <strong>B)</strong> El CBD (Cannabidiol).
                 </button>
               </div>
             </div>
 
             <!-- Pregunta 3.3 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                3. ¿Por qué el médico toxicólogo sabe que Mateo NO morirá de un paro respiratorio químico puro directamente por el THC?
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                3. ¿Por qué el médico sabe con certeza que Mateo NO morirá de un paro respiratorio fulminante directo por sobredosis de THC?
               </p>
               <div class="grid grid-cols-1 gap-2 text-xs">
-                <button onclick="selectOption(3, 'q3', 'A')" id="btn_3_q3_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
+                <button onclick="selectQuiz(3, 'q3', 'A')" id="btn_3_q3_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
                   <strong>A)</strong> Porque en el tronco encefálico (centros respiratorios vitales) casi no existen receptores CB1.
                 </button>
-                <button onclick="selectOption(3, 'q3', 'B')" id="btn_3_q3_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Porque el THC se destruye al entrar en contacto con el aire de los pulmones.
+                <button onclick="selectQuiz(3, 'q3', 'B')" id="btn_3_q3_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Porque el cerebro elimina el THC en menos de 2 segundos.
                 </button>
               </div>
             </div>
+
           </div>
+
         </div>
 
-        <!-- Panel lateral Sala 3 -->
-        <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-slate-950 border border-emerald-800/80 shadow-inner">
-          <div class="w-14 h-14 rounded-2xl bg-emerald-950/80 border border-emerald-500/50 flex items-center justify-center text-emerald-400 text-2xl mb-4 shadow">
-            <i class="fa-solid fa-seedling animate-bounce"></i>
-          </div>
-          <h4 class="font-display text-sm font-bold text-white mb-1">VALIDADOR BOTÁNICO</h4>
-          <p class="text-xs text-slate-400 text-center mb-5">
-            Confirma los parámetros cinéticos para desbloquear la Fase 4 (La Barra de la Fiesta).
-          </p>
+        <!-- Panel de Validación Sala 3 (4 cols) -->
+        <div class="lg:col-span-4 flex flex-col items-center justify-start">
+          <div class="w-full max-w-xs p-5 rounded-2xl bg-slate-950 border border-emerald-800/80 shadow-2xl space-y-4 text-center">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-950 border border-emerald-500/50 flex items-center justify-center text-emerald-400 text-2xl shadow">
+              <i class="fa-solid fa-seedling animate-bounce"></i>
+            </div>
+            
+            <h4 class="font-display font-bold text-white text-sm">VALIDADOR BOTÁNICO</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Confirma los parámetros cinéticos para desbloquear la Fase 4 (La Barra de la Fiesta).
+            </p>
 
-          <button onclick="verifyRoom3()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-tech font-bold text-sm tracking-wider shadow-lg transition transform hover:-translate-y-0.5">
-            <i class="fa-solid fa-unlock-keyhole mr-1"></i> DESBLOQUEAR FASE 4
-          </button>
-          <p id="roomFeedback3" class="text-xs text-center mt-3 min-h-[20px] text-slate-400 font-tech"></p>
+            <button onclick="validateRoom3()" class="touch-btn w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-tech font-bold text-sm tracking-wider shadow-lg shadow-emerald-950 transition">
+              <i class="fa-solid fa-unlock-keyhole mr-1.5"></i> DESBLOQUEAR FASE 4
+            </button>
+
+            <div id="feedbackRoom3" class="text-xs min-h-[24px] font-tech font-bold text-slate-400">
+              Responde las 3 preguntas
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- ========================================================================= -->
     <!-- SALA 4: LA BARRA DE LA FIESTA (Alcohol, GABA & Cinética de Orden Cero)    -->
     <!-- ========================================================================= -->
-    <div id="room4" class="room-section hidden glass-panel rounded-2xl p-5 md:p-8 border border-slate-800 shadow-2xl">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4 mb-6">
+    <section id="room4" class="room-view hidden glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 mb-5">
         <div>
-          <span class="text-xs font-tech text-rose-400 uppercase tracking-widest">EVIDENCIA #04 • BARRA PRINCIPAL DE LA FIESTA</span>
-          <h2 class="text-xl md:text-2xl font-display font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-wine-bottle text-rose-400"></i> Fase 4: La Barra de la Fiesta (El Depresor & Cinética de Orden Cero)
+          <span class="text-xs font-tech text-rose-400 uppercase tracking-widest flex items-center gap-1.5">
+            <i class="fa-solid fa-wine-glass"></i> Evidencia #04 • Mesa de Tragos de la Fiesta
+          </span>
+          <h2 class="text-lg md:text-2xl font-display font-bold text-white mt-0.5">
+            Fase 4: La Barra de la Fiesta (Alcohol Etílico & Cinética Cero)
           </h2>
         </div>
-        <div class="px-3 py-1 rounded-lg bg-rose-950/60 border border-rose-800/80 text-rose-300 text-xs font-mono">
-          <i class="fa-solid fa-lock mr-1"></i> CANDADO CIPHER: CÓDIGO BAC
+        <div class="px-3 py-1.5 rounded-xl bg-rose-950/70 border border-rose-800 text-rose-300 text-xs font-mono font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-lock"></i> CÓDIGO BAC: 3 DÍGITOS
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="lg:col-span-2 space-y-4">
-          <!-- Evidencia de la fiesta -->
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
-            <div class="flex items-center gap-2 text-rose-300 font-bold text-sm">
-              <i class="fa-solid fa-martini-glass"></i> Evidencia en la mesa de tragos:
-            </div>
-            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs">
-              <span class="evidence-tag px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase inline-block mb-1">Evidencia E</span>
-              <p class="font-semibold text-slate-200">Botellas vacías de vodka y vasos de "Borrachera Despierta":</p>
-              <p class="text-slate-300 italic mt-1 text-[11px]">
-                Mateo y sus amigos jugaron rondas rápidas de shots mezclados con bebida energética. Testigos declaran: "Mateo decía que estaba completamente sobrio y despierto por la cafeína, pero sus ojos estaban perdidos y apenas podía mantenerse en pie".
-              </p>
-            </div>
-          </div>
-
-          <!-- Enigmas para descifrar el código numérico [A - B - C] -->
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-rose-900/50 space-y-3">
-            <h4 class="text-xs font-tech uppercase tracking-widest text-rose-300 font-bold flex items-center gap-2">
-              <i class="fa-solid fa-key"></i> DESCIFRA EL CÓDIGO DEL MEDIDOR ALCOHOLIMÉTRICO [A - B - C]:
-            </h4>
-            <p class="text-xs text-slate-300">
-              Consulta en tu dossier la sección de <strong>"Alcohol Etílico: Cinética de Orden Cero y Escala BAC"</strong>:
-            </p>
-
-            <div class="space-y-2 text-xs">
-              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-rose-400 font-bold font-mono">DÍGITO A (Capacidad hepática fija):</span>
-                Revisa la velocidad a la que la enzima Alcohol Deshidrogenasa (ADH) metaboliza el alcohol puro por hora antes de saturarse (cinética de orden cero).
-                <span class="block text-slate-400 text-[11px] mt-1">→ Tu texto indica un rango fijo de X a Y gramos por hora. Toma el <strong>primer dígito</strong> de este rango como tu dígito A.</span>
-              </div>
-
-              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-amber-400 font-bold font-mono">DÍGITO B (Umbral de Coma y LD50):</span>
-                Revisa la tabla de alcoholemia en sangre (BAC). ¿Cuántos gramos por litro en sangre (g/L) marcan el inicio del <strong>coma profundo y la LD50</strong> en adultos no habituados?
-                <span class="block text-slate-400 text-[11px] mt-1">→ Tu lectura marca un rango con decimales. Toma el <strong>número entero inferior</strong> de ese rango como tu dígito B.</span>
-              </div>
-
-              <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                <span class="text-cyan-400 font-bold font-mono">DÍGITO C (Interruptores neuronales):</span>
-                ¿Cuál de las siguientes afirmaciones describe con precisión molecular cómo el alcohol apaga el cerebro?<br>
-                <strong>(2)</strong> El alcohol destruye el cráneo y no entra al tejido cerebral.<br>
-                <strong>(7)</strong> Abre las puertas al cloro en receptores GABA-A (hiperpolarización) y apaga receptores NMDA en el hipocampo (lagunas mentales).<br>
-                <strong>(9)</strong> Produce glucosa extra instantánea en el cerebelo.<br>
-                <span class="block text-slate-400 text-[11px] mt-1">→ El número entre paréntesis de la afirmación correcta es tu dígito C.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Teclado interactivo Sala 4 -->
-        <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-slate-950 border border-rose-800/80 shadow-inner">
-          <div class="w-12 h-12 rounded-2xl bg-rose-950 border border-rose-500/50 flex items-center justify-center text-rose-400 text-xl mb-3 shadow">
-            <i class="fa-solid fa-lock"></i>
-          </div>
-          <span class="text-xs font-tech text-slate-400 uppercase tracking-widest mb-1">CÓDIGO ALCOHOLIMÉTRICO</span>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Evidencia e Instrucciones del Código (8 cols) -->
+        <div class="lg:col-span-7 xl:col-span-8 space-y-4">
           
-          <div class="w-full max-w-[200px] h-14 bg-slate-900 border-2 border-rose-500 rounded-xl flex items-center justify-center font-mono text-2xl tracking-[0.4em] text-rose-300 font-bold shadow-lg shadow-rose-950 mb-4">
-            <span id="codeDisplay4">---</span>
-          </div>
-
-          <div class="grid grid-cols-3 gap-2 w-full max-w-[200px] mb-3">
-            <button onclick="pressKeypad(4, '1')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">1</button>
-            <button onclick="pressKeypad(4, '2')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">2</button>
-            <button onclick="pressKeypad(4, '3')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">3</button>
-            <button onclick="pressKeypad(4, '4')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">4</button>
-            <button onclick="pressKeypad(4, '5')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">5</button>
-            <button onclick="pressKeypad(4, '6')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">6</button>
-            <button onclick="pressKeypad(4, '7')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">7</button>
-            <button onclick="pressKeypad(4, '8')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">8</button>
-            <button onclick="pressKeypad(4, '9')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">9</button>
-            <button onclick="clearKeypad(4)" class="py-2.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 font-mono text-xs text-rose-300 font-bold border border-rose-800 transition">C</button>
-            <button onclick="pressKeypad(4, '0')" class="py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 font-mono text-sm font-bold border border-slate-700 transition">0</button>
-            <button onclick="submitRoomCode(4)" class="py-2.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 font-mono text-xs text-emerald-300 font-bold border border-emerald-800 transition">OK</button>
-          </div>
-
-          <p id="roomFeedback4" class="text-xs text-center min-h-[20px] text-slate-400 font-tech"></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========================================================================= -->
-    <!-- SALA 5: UNIDAD DE REANIMACIÓN (El Protocolo Definitivo)                    -->
-    <!-- ========================================================================= -->
-    <div id="room5" class="room-section hidden glass-panel rounded-2xl p-5 md:p-8 border border-slate-800 shadow-2xl">
-      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4 mb-6">
-        <div>
-          <span class="text-xs font-tech text-amber-400 uppercase tracking-widest">UNIDAD DE CUIDADOS INTENSIVOS • HOSPITAL UNIVERSITARIO</span>
-          <h2 class="text-xl md:text-2xl font-display font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-heart-circle-bolt text-rose-500 animate-pulse"></i> Fase 5: La Cámara de Reanimación (Protocolo de Urgencias)
-          </h2>
-        </div>
-        <div class="px-3 py-1 rounded-lg bg-amber-950/60 border border-amber-800/80 text-amber-300 text-xs font-mono">
-          <i class="fa-solid fa-shield-virus mr-1"></i> FASE FINAL DE ESTABILIZACIÓN
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        <div class="lg:col-span-2 space-y-4">
-          <!-- Resumen del cuadro del paciente -->
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-2">
-            <h3 class="text-amber-300 font-bold text-sm flex items-center gap-2">
-              <i class="fa-solid fa-bed-pulse"></i> Síntesis Toxicológica de Mateo:
-            </h3>
-            <p class="text-slate-300 text-xs leading-relaxed">
-              Has identificado con éxito las cuatro sustancias presentes en el organismo de Mateo:
-              <strong>1) Sobredosis de cafeína y taurina</strong> (bebidas Monster de 500 ml), 
-              <strong>2) Estimulación simpática por clorhidrato de cocaína</strong> (vasoespasmo y riesgo de infarto), 
-              <strong>3) Metabolito 11-OH-THC</strong> por gomitas de cannabis (taquicardia y pánico agudo), y 
-              <strong>4) Intoxicación alcohólica aguda</strong> en cinética de orden cero con riesgo crítico de broncoaspiración.
+          <div class="p-3.5 rounded-xl bg-slate-950/90 border border-slate-800 space-y-1.5 text-xs">
+            <span class="px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/30 text-rose-400 font-mono font-bold text-[10px]">EVIDENCIA E</span>
+            <p class="font-bold text-slate-200">Vasos de Shots y Botellas de Vodka incautadas:</p>
+            <p class="text-slate-300 text-[11px] leading-relaxed italic bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
+              "Mateo jugó fondos seguidos mezclando vodka con latas energéticas ('Borrachera Despierta'). La cafeína apagó su sensación subjetiva de ebriedad haciéndolo beber cantidades masivas en 20 minutos, burlándose de los reflejos normales del cuerpo".
             </p>
           </div>
 
-          <!-- Decisiones clínicas de soporte -->
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-amber-900/50 space-y-4">
-            <h4 class="text-xs font-tech uppercase tracking-widest text-amber-300 font-bold flex items-center gap-2">
-              <i class="fa-solid fa-stethoscope"></i> SELECCIONA EL PROTOCOLO CLÍNICO CORRECTO:
+          <!-- Simulador de Escala de Alcoholemia BAC Interactivo -->
+          <div class="p-4 rounded-xl bg-slate-950/90 border border-rose-900/60 space-y-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <span class="font-tech text-rose-300 uppercase tracking-wider font-bold text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-gauge-high text-rose-400"></i> Medidor Dinámico de Alcoholemia (BAC)
+              </span>
+              <span id="bacGaugeLabel" class="text-xs font-mono font-bold text-rose-400">BAC: 3.5 g/L (Coma Profundo)</span>
+            </div>
+
+            <div class="space-y-2">
+              <input type="range" id="bacSlider" min="0" max="45" value="35" oninput="updateBacGauge(this.value / 10)" class="w-full">
+              <div class="flex justify-between text-[10px] text-slate-500 font-mono">
+                <span>0.2 g/L (Leve)</span>
+                <span>1.0 g/L (Legal)</span>
+                <span>2.5 g/L (Estupor)</span>
+                <span>4.0 g/L (LD50 / Paro)</span>
+              </div>
+            </div>
+
+            <div id="bacStatusCard" class="p-3 rounded-lg bg-rose-950/40 border border-rose-900/80 text-xs text-slate-300">
+              <strong class="text-rose-400">Estado Crítico (3.5 - 4.5 g/L):</strong> Coma etílico profundo, parálisis del bulbo raquídeo, abolición de reflejos y paro respiratorio por asfixia.
+            </div>
+          </div>
+
+          <!-- Pistas para deducir el código BAC [A - B - C] -->
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3 text-xs">
+            <h4 class="font-tech uppercase tracking-widest text-rose-300 font-bold flex items-center justify-between">
+              <span><i class="fa-solid fa-key text-rose-400 mr-1.5"></i> DESCIFRA EL CÓDIGO [ A - B - C ]:</span>
+              <button onclick="openDossierTab('alcohol')" class="text-[11px] text-cyan-400 hover:underline">
+                <i class="fa-solid fa-book mr-1"></i>Ver en Dossier →
+              </button>
             </h4>
 
-            <!-- Decisión 1 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                1. ¿Qué fármaco de urgencias se utiliza para revertir la agitación psicomotriz, las arritmias por exceso de estimulantes y prevenir convulsiones sin usar betabloqueantes puros?
+            <div class="space-y-2">
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+                <span class="text-rose-400 font-bold font-mono">DÍGITO A (Capacidad hepática en Cinética Cero):</span>
+                Revisa a qué tasa fija quema el alcohol por hora la enzima Alcohol Deshidrogenasa (ADH).
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ El dossier indica una tasa fija de <strong>10 a 15 g/hora</strong>. Toma el <strong>primer dígito</strong> de este rango como tu dígito A.</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+                <span class="text-amber-400 font-bold font-mono">DÍGITO B (Umbral de Coma Profundo y LD50):</span>
+                Revisa la escala BAC. ¿Cuántos g/L marcan el límite de inicio del coma profundo y la LD50 en adultos?
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ La tabla marca de <strong>3.5 a 4.5 g/L</strong>. Toma el <strong>número entero inferior</strong> (sin decimales) como tu dígito B.</span>
+              </div>
+
+              <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
+                <span class="text-cyan-400 font-bold font-mono">DÍGITO C (Interruptores Neuronales GABA & NMDA):</span>
+                ¿Cuál de las siguientes afirmaciones describe con precisión molecular el apagado cerebral por alcohol?<br>
+                <strong>(2)</strong> El alcohol destruye el cráneo y no cruza la barrera hematoencefálica.<br>
+                <strong>(7)</strong> Abre las puertas al cloro en receptores GABA-A (hiperpolarización) y bloquea receptores NMDA en el hipocampo (lagunas mentales).<br>
+                <strong>(9)</strong> Genera combustible instantáneo de glucosa en el cerebelo.<br>
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ El número entre paréntesis de la afirmación verdadera es tu dígito C.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna del Teclado Numérico Sala 4 (4 cols) -->
+        <div class="lg:col-span-5 xl:col-span-4 flex flex-col items-center justify-start">
+          <div class="w-full max-w-xs p-5 rounded-2xl bg-slate-950 border-2 border-rose-900/80 shadow-2xl space-y-4">
+            
+            <div class="text-center">
+              <span class="text-[10px] font-tech uppercase tracking-widest text-slate-400 block mb-1">CÓDIGO ALCOHOLIMÉTRICO</span>
+              <div class="h-14 rounded-xl bg-slate-900 border-2 border-rose-500/80 flex items-center justify-center font-mono text-2xl tracking-[0.4em] text-rose-300 font-black shadow-lg shadow-rose-950">
+                <span id="pinDisplay4">---</span>
+              </div>
+            </div>
+
+            <!-- Teclado 3x4 táctil -->
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="pressKey(4, '1')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">1</button>
+              <button onclick="pressKey(4, '2')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">2</button>
+              <button onclick="pressKey(4, '3')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">3</button>
+              
+              <button onclick="pressKey(4, '4')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">4</button>
+              <button onclick="pressKey(4, '5')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">5</button>
+              <button onclick="pressKey(4, '6')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">6</button>
+              
+              <button onclick="pressKey(4, '7')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">7</button>
+              <button onclick="pressKey(4, '8')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">8</button>
+              <button onclick="pressKey(4, '9')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">9</button>
+              
+              <button onclick="clearPin(4)" class="num-key touch-btn bg-rose-950/80 hover:bg-rose-900 border border-rose-800/80 text-rose-300 text-sm font-tech">BORRAR</button>
+              <button onclick="pressKey(4, '0')" class="num-key touch-btn bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200">0</button>
+              <button onclick="submitPin(4)" class="num-key touch-btn bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-700 text-emerald-300 text-sm font-tech">VALIDAR</button>
+            </div>
+
+            <div id="pinFeedback4" class="text-xs text-center min-h-[24px] font-tech font-bold text-slate-400">
+              Ingresa los 3 dígitos [A - B - C]
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SALA 5: UNIDAD DE REANIMACIÓN (Protocolo Clínico y Antídoto)              -->
+    <!-- ========================================================================= -->
+    <section id="room5" class="room-view hidden glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 mb-5">
+        <div>
+          <span class="text-xs font-tech text-amber-400 uppercase tracking-widest flex items-center gap-1.5">
+            <i class="fa-solid fa-heart-circle-bolt text-rose-500 animate-pulse"></i> Unidad de Cuidados Intensivos • Hospital Universitario
+          </span>
+          <h2 class="text-lg md:text-2xl font-display font-bold text-white mt-0.5">
+            Fase 5: Reanimación y Protocolo Definitivo
+          </h2>
+        </div>
+        <div class="px-3 py-1.5 rounded-xl bg-amber-950/70 border border-amber-800 text-amber-300 text-xs font-mono font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved"></i> ESTABILIZACIÓN MÉDICA FINAL
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Síntesis y Decisiones Clínicas (8 cols) -->
+        <div class="lg:col-span-8 space-y-4">
+          
+          <div class="p-4 rounded-xl bg-slate-950/90 border border-amber-900/60 space-y-2 text-xs">
+            <h3 class="text-amber-300 font-bold text-sm flex items-center gap-2">
+              <i class="fa-solid fa-stethoscope"></i> Resumen Toxicológico del Paciente:
+            </h3>
+            <p class="text-slate-300 leading-relaxed">
+              Has identificado con éxito las cuatro sustancias que colapsaron a Mateo: 
+              <strong>1) Cafeína masiva + taurina</strong> (taquicardia supraventricular), 
+              <strong>2) Clorhidrato de cocaína</strong> (cierre coronario y bloqueo de canales de sodio cardíacos), 
+              <strong>3) 11-hidroxi-THC</strong> por comestibles (pánico agudo y taquicardia sostenida), y 
+              <strong>4) Alcohol etílico</strong> saturando ADH (depresión respiratoria inminente y pérdida de reflejos).
+            </p>
+          </div>
+
+          <!-- Protocolo Clínico UCI -->
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-4">
+            <h4 class="font-tech uppercase tracking-widest text-amber-300 font-bold text-xs">
+              SELECCIONA EL PROTOCOLO CLÍNICO BASADO EN TOXICOLOGÍA MÉDICA:
+            </h4>
+
+            <!-- Decisión 5.1 -->
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                1. ¿Qué fármaco de urgencias se utiliza para revertir la agitación psicomotriz, las arritmias por exceso simpático y prevenir convulsiones sin desencadenar vasoespasmo?
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button onclick="selectOption(5, 'q1', 'A')" id="btn_5_q1_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
+                <button onclick="selectQuiz(5, 'q1', 'A')" id="btn_5_q1_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
                   <strong>A)</strong> Benzodiacepinas intravenosas (Diazepam/Lorazepam) y enfriamiento activo.
                 </button>
-                <button onclick="selectOption(5, 'q1', 'B')" id="btn_5_q1_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Más cafeína concentrada para intentar reanimarlo.
+                <button onclick="selectQuiz(5, 'q1', 'B')" id="btn_5_q1_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Inyectar adrenalina y cafeína pura para despertarlo de golpe.
                 </button>
               </div>
             </div>
 
-            <!-- Decisión 2 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                2. Para evitar la muerte inmediata por asfixia si Mateo vomita mientras se encuentra estuporoso por el alcohol, ¿en qué posición protectora debe colocarse de inmediato?
+            <!-- Decisión 5.2 -->
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                2. Para prevenir la muerte fulminante por asfixia si Mateo vomita mientras se encuentra estuporoso por el alcohol, ¿en qué posición protectora debe colocarse?
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button onclick="selectOption(5, 'q2', 'A')" id="btn_5_q2_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>A)</strong> Posición Lateral de Seguridad (de lado) para proteger la vía aérea.
+                <button onclick="selectQuiz(5, 'q2', 'A')" id="btn_5_q2_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>A)</strong> Posición Lateral de Seguridad (PLS) de lado para proteger la vía aérea.
                 </button>
-                <button onclick="selectOption(5, 'q2', 'B')" id="btn_5_q2_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Acostado completamente boca arriba sin almohada.
+                <button onclick="selectQuiz(5, 'q2', 'B')" id="btn_5_q2_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Acostado boca arriba sin almohada para que respire al techo.
                 </button>
               </div>
             </div>
 
-            <!-- Decisión 3 -->
-            <div class="p-3 rounded-lg bg-slate-950 border border-slate-800">
-              <p class="text-xs text-slate-200 font-semibold mb-2">
-                3. ¿Qué intervención hidroelectrolítica es vital para estabilizar el miocardio tras la pérdida excesiva por diuresis de la cafeína y la taurina?
+            <!-- Decisión 5.3 -->
+            <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+              <p class="text-xs text-slate-200 font-semibold">
+                3. ¿Qué soporte hidroelectrolítico es vital para estabilizar el miocardio tras la pérdida excesiva por diuresis de la cafeína y la taurina?
               </p>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <button onclick="selectOption(5, 'q3', 'A')" id="btn_5_q3_A" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>A)</strong> Rehidratación salina intravenosa y reposición de Potasio y Magnesio.
+                <button onclick="selectQuiz(5, 'q3', 'A')" id="btn_5_q3_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>A)</strong> Suero salino intravenoso con reposición de Potasio y Magnesio.
                 </button>
-                <button onclick="selectOption(5, 'q3', 'B')" id="btn_5_q3_B" class="opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition">
-                  <strong>B)</strong> Administrar diuréticos potentes para deshidratarlo aún más.
+                <button onclick="selectQuiz(5, 'q3', 'B')" id="btn_5_q3_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>B)</strong> Administrar diuréticos para quitarle más agua al cuerpo.
                 </button>
               </div>
             </div>
+
           </div>
+
         </div>
 
-        <!-- Panel de administración final -->
-        <div class="flex flex-col items-center justify-center p-6 rounded-xl bg-slate-950 border border-amber-800/80 shadow-inner">
-          <div class="w-14 h-14 rounded-2xl bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-amber-400 text-3xl mb-4 shadow">
-            <i class="fa-solid fa-syringe animate-pulse"></i>
-          </div>
-          <h4 class="font-display text-sm font-bold text-white mb-1">GABINETE DE SOPORTE</h4>
-          <p class="text-xs text-slate-400 text-center mb-5">
-            Aplica el protocolo clínico para estabilizar los signos vitales de Mateo y concluir el caso.
-          </p>
+        <!-- Panel de Administración del Antídoto (4 cols) -->
+        <div class="lg:col-span-4 flex flex-col items-center justify-start">
+          <div class="w-full max-w-xs p-5 rounded-2xl bg-slate-950 border border-amber-800/80 shadow-2xl space-y-4 text-center">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-950 border border-amber-500/50 flex items-center justify-center text-amber-400 text-3xl shadow">
+              <i class="fa-solid fa-syringe animate-pulse"></i>
+            </div>
+            
+            <h4 class="font-display font-bold text-white text-sm">GABINETE CLÍNICO UCI</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Aplica el protocolo para revertir la taquicardia, descender la temperatura y salvar a Mateo.
+            </p>
 
-          <button onclick="administerAntidote()" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-display font-bold text-sm tracking-wider shadow-xl shadow-rose-950/50 transition transform hover:-translate-y-0.5">
-            <i class="fa-solid fa-heart-pulse mr-1.5"></i> APLICAR PROTOCOLO MÉDICO
-          </button>
-          <p id="roomFeedback5" class="text-xs text-center mt-3 min-h-[20px] text-slate-400 font-tech"></p>
+            <button onclick="administerProtocol()" class="touch-btn w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-600 hover:from-amber-400 hover:to-indigo-500 text-white font-display font-bold text-xs md:text-sm tracking-wider shadow-xl shadow-rose-950/60 transition">
+              <i class="fa-solid fa-heart-pulse mr-1.5"></i> APLICAR PROTOCOLO MÉDICO
+            </button>
+
+            <div id="feedbackRoom5" class="text-xs min-h-[24px] font-tech font-bold text-slate-400">
+              Selecciona las 3 decisiones clínicas
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- ========================================================================= -->
-    <!-- PANTALLA DE VICTORIA FINAL                                                -->
+    <!-- PANTALLA DE VICTORIA Y CERTIFICADO TOXICOLÓGICO                           -->
     <!-- ========================================================================= -->
-    <div id="victoryScreen" class="hidden glass-panel rounded-2xl p-6 md:p-10 border border-emerald-500/60 shadow-2xl text-center relative overflow-hidden">
-      <div class="w-24 h-24 mx-auto rounded-3xl bg-emerald-950/80 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-4xl mb-4 shadow-lg shadow-emerald-500/20 animate-bounce">
+    <section id="victoryScreen" class="hidden glass-card rounded-2xl p-6 md:p-10 border border-emerald-500/60 shadow-2xl text-center relative overflow-hidden">
+      <div class="w-24 h-24 mx-auto rounded-3xl bg-emerald-950/80 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-4xl mb-4 shadow-lg shadow-emerald-500/25 animate-bounce">
         <i class="fa-solid fa-trophy"></i>
       </div>
+
       <div class="inline-block px-4 py-1 rounded-full bg-emerald-900/60 border border-emerald-500 text-emerald-300 text-xs font-tech font-bold uppercase tracking-widest mb-3">
-        MISIÓN MÉDICA CUMPLIDA • PACIENTE FUERA DE PELIGRO
+        MISIÓN MÉDICA CUMPLIDA • PACIENTE ESTABILIZADO
       </div>
+
       <h2 class="text-2xl md:text-4xl font-display font-black text-white mb-3">
         ¡HAS RESUELTO EL ENIGMA TOXICOLÓGICO DE PRAGA!
       </h2>
-      <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto mb-6">
-        Gracias a tu capacidad de análisis e investigación en los dossiers, identificaste con éxito las fuentes de 
-        <strong>cafeína, taurina, guaraná, cocaína, cannabis y alcohol</strong>. El ritmo cardíaco de Mateo bajó a <strong>76 BPM</strong> y su temperatura se normalizó a <strong>36.6°C</strong>.
+
+      <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto mb-6 leading-relaxed">
+        Gracias a tu dominio de la farmacocinética y toxicología médica, neutralizaste el cuadro polimaterial de Mateo. Su ritmo cardíaco bajó a <strong class="text-emerald-400">76 BPM</strong>, su temperatura se normalizó a <strong class="text-emerald-400">36.6°C</strong> y su vía aérea está 100% segura.
       </p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto mb-8 text-left">
+      <!-- Ficha de resultados y métricas -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-xl mx-auto mb-8 text-left">
         <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-          <span class="text-xs text-slate-400 block font-tech">TIEMPO EMPLEADO</span>
+          <span class="text-xs text-slate-400 block font-tech uppercase">TIEMPO EMPLEADO</span>
           <span id="finalTimeScore" class="text-lg font-mono font-bold text-cyan-400">--:--</span>
         </div>
         <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-          <span class="text-xs text-slate-400 block font-tech">FASES SUPERADAS</span>
+          <span class="text-xs text-slate-400 block font-tech uppercase">FASES SUPERADAS</span>
           <span class="text-lg font-mono font-bold text-emerald-400">5 / 5 (100%)</span>
         </div>
         <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-          <span class="text-xs text-slate-400 block font-tech">RANGO FORENSE</span>
-          <span class="text-lg font-mono font-bold text-amber-400">ESPECIALISTA CLÍNICO</span>
+          <span class="text-xs text-slate-400 block font-tech uppercase">RANGO OBTENIDO</span>
+          <span class="text-lg font-mono font-bold text-amber-400">ESPECIALISTA FORENSE</span>
         </div>
       </div>
 
+      <!-- Acciones de victoria -->
       <div class="flex flex-wrap justify-center gap-3">
-        <button onclick="restartGame()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs tracking-wider border border-slate-700 transition">
-          <i class="fa-solid fa-rotate-left mr-1"></i> REINICIAR CASO
+        <button onclick="confirmRestartGame()" class="touch-btn px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs tracking-wider border border-slate-700 transition flex items-center gap-2">
+          <i class="fa-solid fa-rotate-left"></i> REINICIAR CASO
         </button>
-        <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-tech font-bold text-xs tracking-wider shadow-lg transition">
-          <i class="fa-solid fa-certificate mr-1"></i> IMPRIMIR INFORME DE CASO
+        <button onclick="window.print()" class="touch-btn px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-tech font-bold text-xs tracking-wider shadow-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-print"></i> IMPRIMIR CERTIFICADO
         </button>
       </div>
-    </div>
+    </section>
+
   </main>
 
-  <!-- Modal de Guía de Estudio (Sin revelar respuestas directas) -->
-  <div id="helpModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
-    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-amber-600/70 shadow-2xl max-h-[85vh] overflow-y-auto scrollbar-thin">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="font-display font-bold text-base text-amber-400 flex items-center gap-2">
-          <i class="fa-solid fa-folder-open"></i> Guía del Investigador Forense
-        </h3>
-        <button onclick="closeModal('helpModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+  <!-- ========================================================================= -->
+  <!-- MODAL / DRAWER INTERACTIVO DEL DOSSIER (BIBLIOTECA COMPLETA)              -->
+  <!-- ========================================================================= -->
+  <div id="dossierModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md">
+    <div class="glass-card w-full max-w-3xl rounded-2xl border border-amber-600/70 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      
+      <!-- Encabezado del Dossier -->
+      <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950/80 shrink-0">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-950 border border-amber-500/50 flex items-center justify-center text-amber-400 text-sm">
+            <i class="fa-solid fa-book-medical"></i>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-sm md:text-base text-amber-300">
+              DOSSIER MÉDICO Y TOXICOLÓGICO FORENSE
+            </h3>
+            <p class="text-[10px] text-slate-400 font-tech uppercase tracking-wider">
+              Documentos de Consulta Oficial • Caso Clínico #CZ-892
+            </p>
+          </div>
+        </div>
+        <button onclick="toggleDossierModal()" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-base">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
-      <div class="text-xs text-slate-300 space-y-3 leading-relaxed">
-        <p class="text-amber-200 font-semibold">
-          ¿Dónde encontrar las respuestas en tus dossiers?
-        </p>
-        <p>📖 <strong>Para Fase 1 (Bebidas Energéticas):</strong> Revisa en tu <em>Dossier de Bebidas Energéticas</em> la tabla comparativa de Coca-Cola vs. Monster (160 mg vs. 34 mg), la sección de dosis de riesgo (taquicardia y temblores) y la concentración botánica de las semillas de guaraná.</p>
-        <p>📖 <strong>Para Fase 2 (Coca vs. Cocaína):</strong> Revisa en el <em>Dossier de Productos Ancestrales</em> el relato de los montañistas andinos, la diferencia en velocidad de absorción, la analogía de la "aspiradora rota" (transportador DAT) y el efecto anestésico en canales de sodio cardíacos.</p>
-        <p>📖 <strong>Para Fase 3 (Cannabis):</strong> Consulta el caso de Charlotte Figi (THC vs. CBD) y la sección de comestibles (<em>edibles</em>) para ver qué metabolito crea el hígado y por qué no hay receptores CB1 en el centro respiratorio del tronco encefálico.</p>
-        <p>📖 <strong>Para Fase 4 (Alcohol):</strong> Consulta la sección de Cinética de Orden Cero (tasa fija que quema la enzima ADH en gramos por hora), la tabla BAC de coma y LD50, y los receptores GABA-A y NMDA.</p>
+
+      <!-- Barra de pestañas del Dossier -->
+      <div class="flex items-center gap-1.5 p-2 bg-slate-900 border-b border-slate-800 overflow-x-auto scrollbar-thin shrink-0 text-xs">
+        <button onclick="openDossierTab('bebidas')" id="dossierTab_bebidas" class="touch-btn px-3 py-1.5 rounded-lg bg-amber-600 text-white font-bold whitespace-nowrap">
+          ⚡ Bebidas Energéticas
+        </button>
+        <button onclick="openDossierTab('coca')" id="dossierTab_coca" class="touch-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">
+          🌿 Coca vs Cocaína
+        </button>
+        <button onclick="openDossierTab('cannabis')" id="dossierTab_cannabis" class="touch-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">
+          🍃 Cannabis & Edibles
+        </button>
+        <button onclick="openDossierTab('alcohol')" id="dossierTab_alcohol" class="touch-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">
+          🍸 Alcohol & Cinética 0
+        </button>
+        <button onclick="openDossierTab('kahoot')" id="dossierTab_kahoot" class="touch-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">
+          🎯 Glosario de Claves
+        </button>
       </div>
-      <div class="mt-5 text-right">
-        <button onclick="closeModal('helpModal')" class="px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition">
-          Entendido
+
+      <!-- Área de Contenido del Dossier con Scroll -->
+      <div class="p-4 md:p-6 overflow-y-auto space-y-4 text-xs md:text-sm text-slate-300 leading-relaxed scrollbar-thin flex-1">
+        
+        <!-- Pestaña 1: Bebidas -->
+        <div id="dossierContent_bebidas" class="space-y-4">
+          <div class="p-3.5 rounded-xl bg-amber-950/40 border border-amber-900/60">
+            <h4 class="font-display font-bold text-amber-300 text-sm mb-1">EL PELIGRO DE LAS BEBIDAS ENERGÉTICAS</h4>
+            <p class="text-xs text-slate-300">Una bebida energética NO es una bebida deportiva (las deportivas solo reponen agua y sales minerales). Una bebida energética es un cóctel concentrado de estimulantes que fuerzan al cerebro y corazón a trabajar a marchas forzadas.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-cyan-300">1. Mecanismo de la Cafeína (Enchufes Cerebrales de Adenosina):</h5>
+            <p>La adenosina se conecta a receptores cerebrales indicándole al cuerpo que sienta cansancio y se relaje. La cafeína tiene una estructura química similar a la adenosina y <strong>bloquea competitivamente estos receptores</strong>. Al taparlos, el cerebro no siente fatiga y, creyendo que hay una emergencia, libera <strong>adrenalina</strong>, acelerando el corazón y la presión arterial.</p>
+            <ul class="list-disc pl-5 space-y-1 text-slate-300 text-xs">
+              <li><strong>Lata de Coca-Cola original (355 ml):</strong> ~34 mg de cafeína.</li>
+              <li><strong>Taza de café americano (240 ml):</strong> 95 - 120 mg de cafeína.</li>
+              <li><strong>Lata de Monster Energy (500 ml):</strong> 160 mg de cafeína (≈ 4.7, o casi 5 latas de Coca-Cola).</li>
+              <li><strong>Límite seguro diario en adultos:</strong> Hasta 400 mg. En adolescentes el tope es 100 mg.</li>
+              <li><strong>Dosis de riesgo y malestar:</strong> 500 a 600 mg (tomarse 3 a 4 Monsters seguidas) provocando taquicardia severa, temblor de manos, ansiedad extrema y mareos.</li>
+              <li><strong>Dosis letal (LD50):</strong> 150 a 200 mg/kg (entre 10 y 14 gramos en un adulto de 70 kg, o 60 a 85 latas de golpe).</li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-amber-300">2. Taurina (El Copiloto que Aprieta el Acelerador):</h5>
+            <p>Es un aminoácido presente en carnes y pescados. Ayuda a regular el agua y el flujo de calcio en el miocardio. Su peligro no radica en toxicidad aislada, sino en su <strong>efecto sinérgico multiplicador con la cafeína</strong>: fuerza al músculo cardíaco a contraerse con una fuerza desmedida y fatiga al corazón.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-purple-300">3. Guaraná (La Trampa de la Cafeína Oculta):</h5>
+            <p>Semilla del Amazonas con cafeína de <strong>3 a 4 veces más concentrada</strong> que el café. Contiene <strong>taninos astringentes</strong> que hacen que el estómago absorba la cafeína mucho más despacio, prolongando el estímulo durante más de 8 a 10 horas. Además, muchas marcas agregan extracto de guaraná que aporta cafeína adicional no sumada en la etiqueta frontal.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-rose-300">4. Mezcla con Alcohol ("La Borrachera Despierta"):</h5>
+            <p>La cafeína apaga la percepción de somnolencia del alcohol. El individuo se siente despierto aunque sus reflejos y juicio motriz estén colapsados, lo que lo lleva a beber el triple y sufrir comas etílicos graves.</p>
+          </div>
+        </div>
+
+        <!-- Pestaña 2: Coca vs Cocaína -->
+        <div id="dossierContent_coca" class="hidden space-y-4">
+          <div class="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-900/60">
+            <h4 class="font-display font-bold text-indigo-300 text-sm mb-1">HOJA DE COCA VS. CLORHIDRATO DE COCAÍNA</h4>
+            <p class="text-xs text-slate-300">De herramienta de supervivencia andina a veneno sintético cardiovascular.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-emerald-300">1. El Acullico Tradicional Andino:</h5>
+            <p>Los arrieros y mineros de los Andes (más de 4,000 msnm) mastican hojas secas de coca con una pizca de ceniza alcalina (<em>llipta</em>). Esta vía mucosa y digestiva libera <strong>microcantidades lentas</strong> de alcaloides naturales que alcanzan su pico en sangre a los <strong>60 minutos</strong>. Nunca satura el cerebro ni causa espasmo coronario ni adicción desmedida.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-rose-300">2. Clorhidrato Puro y Bloqueo del Transportador DAT:</h5>
+            <p>La neurona libera dopamina y luego una "aspiradora" celular llamada <strong>transportador de dopamina (DAT)</strong> la recoge. La cocaína pura <strong>tapa y bloquea la aspiradora DAT por completo</strong>. La dopamina se acumula en niveles masivos (hasta 1,000% más). Para defenderse, el cerebro destruye sus propios receptores de dopamina; cuando la sustancia desaparece, el sujeto sufre anhedonia (incapacidad de sentir placer natural) y <em>craving</em> agudo.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-amber-300">3. Cardiotoxicidad y Paro Cardíaco:</h5>
+            <p>La cocaína actúa como veneno miocárdico directo: <strong>bloquea los canales de sodio (Nav)</strong> de las células cardíacas (efecto anestésico) y produce un <strong>vasoespasmo coronario severo</strong> que estrangula el flujo de sangre, desencadenando arritmias malignas o infartos agudos en jóvenes de 17-20 años sanos.</p>
+            <p>LD50 estimada en humanos: 1,000 a 1,400 mg (1 a 1.4 g). En personas susceptibles o con vasoespasmo súbito se han documentado muertes con apenas 20 a 50 mg.</p>
+          </div>
+        </div>
+
+        <!-- Pestaña 3: Cannabis -->
+        <div id="dossierContent_cannabis" class="hidden space-y-4">
+          <div class="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-900/60">
+            <h4 class="font-display font-bold text-emerald-300 text-sm mb-1">CANNABIS: THC VS. CBD Y COMESTIBLES</h4>
+            <p class="text-xs text-slate-300">Farmacocinética de los fitocannabinoides y receptores endocannabinoides.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-cyan-300">1. Caso Charlotte Figi (THC vs CBD):</h5>
+            <p>Charlotte padecía Síndrome de Dravet (más de 300 convulsiones a la semana). La marihuana recreativa alta en THC empeoraba su cuadro. Un extracto cargado en <strong>CBD (Cannabidiol)</strong> sin THC redujo sus ataques a menos de 3 al mes. El CBD actúa como freno, tiene propiedades anticonvulsivantes y carece de efecto eufórico/psicoactivo.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-emerald-300">2. Receptores CB1 y CB2:</h5>
+            <p>El THC se une al receptor CB1 cerebral (memoria, equilibrio y juicio). A dosis altas desencadena paranoia y taquicardia refleja.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-amber-300">3. La Trampa de los Comestibles (Edibles) y el 11-OH-THC:</h5>
+            <p>Al comer gomitas o brownies, el alimento tarda de <strong>45 a 120 minutos</strong> en digerirse. Como no sienten efecto rápido, los usuarios se redosifican. Al pasar por el hígado (metabolismo de primer paso), el THC se transforma en <strong>11-hidroxi-THC (11-OH-THC)</strong>, un metabolito hasta <strong>4 veces más potente</strong> que cruza la barrera hematoencefálica causando taquicardia violenta, vómito y ataques de pánico.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-rose-300">4. ¿Por qué el THC no causa paro respiratorio fulminante directo?</h5>
+            <p>A diferencia de los opioides o el alcohol, en el <strong>tronco encefálico</strong> (el centro primitivo del cerebro que controla el ritmo cardiorrespiratorio automático) <strong>prácticamente no existen receptores CB1</strong>. Por ello, una sobredosis letal pura de THC por parálisis respiratoria es casi inexistente en humanos adultos.</p>
+          </div>
+        </div>
+
+        <!-- Pestaña 4: Alcohol -->
+        <div id="dossierContent_alcohol" class="hidden space-y-4">
+          <div class="p-3.5 rounded-xl bg-rose-950/40 border border-rose-900/60">
+            <h4 class="font-display font-bold text-rose-300 text-sm mb-1">ALCOHOL ETÍLICO: CINÉTICA CERO Y ESCALA BAC</h4>
+            <p class="text-xs text-slate-300">El depresor central y la saturación de las enzimas hepáticas.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-rose-400">1. Cinética de Orden Cero:</h5>
+            <p>Las enzimas hepáticas (Alcohol Deshidrogenasa, ADH) se saturan con apenas 1 o 2 tragos. Por tanto, el cuerpo solo puede metabolizar una <strong>tasa fija y constante de 10 a 15 gramos de alcohol puro por hora</strong> (una cerveza cada 1.5 horas). Si una persona toma shots seguidos, el alcohol se acumula en sangre sin poder eliminarse más rápido.</p>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-cyan-300">2. Receptores GABA-A y NMDA:</h5>
+            <ul class="list-disc pl-5 space-y-1 text-slate-300 text-xs">
+              <li><strong>Pisa el freno (GABA-A):</strong> Abre las puertas al cloro en las neuronas (hiperpolarización), apagando la actividad eléctrica cerebral (desinhibición, luego torpeza y finalmente coma).</li>
+              <li><strong>Apaga la memoria (NMDA):</strong> Bloquea los canales de glutamato en el hipocampo impidiendo fijar recuerdos, causando <em>blackouts</em> o lagunas mentales.</li>
+            </ul>
+          </div>
+
+          <div class="space-y-2">
+            <h5 class="font-bold text-amber-300">3. Escala BAC y Dosis Letal (LD50):</h5>
+            <ul class="list-disc pl-5 space-y-1 text-slate-300 text-xs">
+              <li><strong>0.2 a 0.5 g/L:</strong> Ligera desinhibición, reflejos un poco más lentos.</li>
+              <li><strong>0.8 a 1.5 g/L:</strong> Límite legal rebasado, marcha tambaleante, habla pastosa.</li>
+              <li><strong>2.0 a 3.0 g/L:</strong> Estupor, incapacidad de estar de pie, alto riesgo de broncoaspiración si vomita.</li>
+              <li><strong>3.5 a 4.5 g/L (LD50 en no tolerantes):</strong> Coma alcohólico profundo, pupilas dilatadas arreactivas y paro respiratorio por inhibición del centro bulbar.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Pestaña 5: Glosario Kahoot -->
+        <div id="dossierContent_kahoot" class="hidden space-y-3">
+          <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+            <h4 class="font-display font-bold text-cyan-300 text-sm mb-1">GLOSARIO & CLAVES FORENSES KAHOOT</h4>
+            <p class="text-xs text-slate-400">Resumen condensado de los 16 reactivos del examen de Toxicología:</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-cyan-300">Adenosina:</strong> Receptor engañado por cafeína.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-cyan-300">1 Monster (500 ml):</strong> ≈ 4.7 (5) latas de Coca-Cola.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-cyan-300">Límite Adulto:</strong> 400 mg diarios de cafeína.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-amber-300">Taurina:</strong> Incrementa contractilidad miocárdica con calcio.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-purple-300">Guaraná:</strong> Taninos retrasan absorción gástrica; 3-4x más concentrada.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-rose-300">Borrachera Despierta:</strong> Apaga la percepción de ebriedad motriz.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-emerald-300">Acullico:</strong> Absorción lenta y microdosis seguras sin arritmias.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-indigo-300">DAT:</strong> Transportador de dopamina bloqueado por cocaína.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-rose-300">Canales de Sodio (Nav):</strong> Bloqueo miocárdico + vasoespasmo coronario.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-emerald-300">CBD:</strong> Anticonvulsivante de Charlotte Figi sin efecto eufórico.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-amber-300">11-OH-THC:</strong> Metabolito hepático comestible 4 veces más potente.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-cyan-300">Tronco Encefálico:</strong> Carece de CB1 (ausencia de paro respiratorio directo).
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-rose-300">Cinética Cero:</strong> Hígado quema 10-15 g/hora de alcohol fijos.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-rose-300">Receptores NMDA:</strong> Bloqueados en hipocampo (blackouts).
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-amber-300">3.5 a 4.5 g/L BAC:</strong> Coma profundo y LD50.
+            </div>
+            <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+              <strong class="text-emerald-300">Posición Lateral:</strong> Previene asfixia por vómito (broncoaspiración).
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pie del modal -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 text-right shrink-0">
+        <button onclick="toggleDossierModal()" class="touch-btn px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs">
+          Cerrar Dossier y Continuar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- SISTEMA DE TOASTS FLOTANTES NO BLOQUEANTES                                -->
+  <!-- ========================================================================= -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-3"></div>
+
+  <!-- MODAL DE CONFIRMACIÓN DE REINICIO -->
+  <div id="confirmRestartModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+    <div class="glass-card w-full max-w-sm rounded-2xl p-6 border border-slate-700 shadow-2xl text-center space-y-4">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-rose-950 border border-rose-500/50 flex items-center justify-center text-rose-400 text-2xl shadow">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="font-display font-bold text-white text-base">¿Reiniciar Investigación?</h3>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        Se borrará el progreso guardado y el cronómetro volverá a 35:00 minutos.
+      </p>
+      <div class="flex items-center justify-center gap-3 pt-2">
+        <button onclick="closeRestartModal()" class="touch-btn px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+          Cancelar
+        </button>
+        <button onclick="executeRestartGame()" class="touch-btn px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold">
+          Sí, Reiniciar
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Universal de Avisos (Reemplazo estricto de alert()) -->
-  <div id="messageModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-    <div class="glass-panel w-full max-w-md rounded-2xl p-6 border shadow-2xl text-center transform transition-all" id="messageModalBox">
-      <div id="messageModalIcon" class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3"></div>
-      <h3 id="messageModalTitle" class="font-display font-bold text-lg text-white mb-2"></h3>
-      <p id="messageModalText" class="text-xs md:text-sm text-slate-300 leading-relaxed mb-5"></p>
-      <button onclick="closeModal('messageModal')" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition">
-        Aceptar
-      </button>
-    </div>
-  </div>
-
+  <!-- ========================================================================= -->
+  <!-- LÓGICA DE JUEGO, SONIDO Y SINCRONIZACIÓN LOCALSTORAGE                     -->
+  <!-- ========================================================================= -->
   <script>
-    // Estado global de la aplicación
-    const state = {
+    // -------------------------------------------------------------
+    // MOTOR DE SONIDO NATIVO WEB AUDIO API (CERO DEPENDENCIAS, CERO CRASHES)
+    // -------------------------------------------------------------
+    class WebAudioEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.ctx = new AudioContext();
+          }
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      // Haptic tactile vibration
+      vibrate(ms = 15) {
+        if (navigator.vibrate) {
+          try { navigator.vibrate(ms); } catch (e) {}
+        }
+      }
+
+      // Latido o bip de monitor clínico
+      playHeartbeat(freq = 880) {
+        if (!this.enabled || !this.ctx) return;
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } catch (e) {}
+      }
+
+      // Clic de teclado táctil
+      playKeyClick() {
+        if (!this.enabled || !this.ctx) return;
+        this.vibrate(10);
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(650, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.04);
+        } catch (e) {}
+      }
+
+      // Fanfarria de éxito al superar una fase
+      playSuccess() {
+        if (!this.enabled || !this.ctx) return;
+        this.vibrate([20, 50, 40]);
+        try {
+          const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+          notes.forEach((freq, idx) => {
+            const start = this.ctx.currentTime + (idx * 0.08);
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, start);
+            gain.gain.setValueAtTime(0.1, start);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(start);
+            osc.stop(start + 0.22);
+          });
+        } catch (e) {}
+      }
+
+      // Tono de error
+      playError() {
+        if (!this.enabled || !this.ctx) return;
+        this.vibrate(80);
+        try {
+          const now = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(140, now);
+          osc.frequency.setValueAtTime(110, now + 0.1);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } catch (e) {}
+      }
+    }
+
+    const sound = new WebAudioEngine();
+
+    // -------------------------------------------------------------
+    // ESTADO GLOBAL Y PERSISTENCIA LOCALSTORAGE
+    // -------------------------------------------------------------
+    const STORAGE_KEY = 'escaperoom_toxi_state_v2';
+
+    const defaultState = {
+      started: false,
       currentRoom: 1,
       unlockedRooms: [1],
-      roomAnswers: {
-        r1_code: '',
-        r2_q: { q1: null, q2: null, q3: null },
-        r3_q: { q1: null, q2: null, q3: null },
-        r4_code: '',
-        r5_q: { q1: null, q2: null, q3: null }
-      },
-      timeSeconds: 35 * 60,
-      timerActive: false,
-      timerInterval: null,
-      soundEnabled: false,
+      pin1: '',
+      pin4: '',
+      r2_q: { q1: null, q2: null, q3: null },
+      r3_q: { q1: null, q2: null, q3: null },
+      r5_q: { q1: null, q2: null, q3: null },
+      remainingSeconds: 35 * 60,
       completed: false
     };
 
-    // Sintetizador Tone.js para efectos de audio sin dependencias externas
-    let synth = null;
-    function initAudio() {
-      if (!synth && window.Tone) {
-        synth = new Tone.PolySynth(Tone.Synth).toDestination();
-        synth.volume.value = -12;
-      }
+    let gameState = { ...defaultState };
+
+    function loadSavedState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          gameState = { ...defaultState, ...parsed };
+        }
+      } catch (e) {}
     }
 
-    function playBeep(note = "C5", duration = "16n") {
-      if (state.soundEnabled && synth) {
-        try {
-          Tone.start();
-          synth.triggerAttackRelease(note, duration);
-        } catch (e) {}
-      }
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+      } catch (e) {}
     }
 
-    function playSuccessSound() {
-      if (state.soundEnabled && synth) {
-        try {
-          Tone.start();
-          synth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "8n");
-        } catch (e) {}
+    // -------------------------------------------------------------
+    // ANIMACIÓN DEL CANVAS ECG (ELECTROCARDIOGRAMA)
+    // -------------------------------------------------------------
+    const ecgCanvas = document.getElementById('ecgCanvas');
+    const ecgCtx = ecgCanvas ? ecgCanvas.getContext('2d') : null;
+    let ecgX = 0;
+    let ecgPoints = [];
+    let lastBeatTime = 0;
+
+    function renderEcg() {
+      if (!ecgCtx) return;
+      const w = ecgCanvas.width;
+      const h = ecgCanvas.height;
+      const midY = h / 2;
+
+      // Desvanecer trazo anterior
+      ecgCtx.fillStyle = 'rgba(5, 8, 20, 0.12)';
+      ecgCtx.fillRect(0, 0, w, h);
+
+      // Calcular intervalo según BPM
+      const bpm = gameState.completed ? 76 : (gameState.remainingSeconds < 600 ? 165 : 148);
+      const beatInterval = (60 / bpm) * 1000;
+      const now = performance.now();
+
+      let targetY = midY;
+      const timeSinceBeat = (now - lastBeatTime) % beatInterval;
+
+      if (timeSinceBeat < 40) {
+        targetY = midY + 3; // Onda P
+      } else if (timeSinceBeat >= 80 && timeSinceBeat < 110) {
+        targetY = midY - 2; // Q
+      } else if (timeSinceBeat >= 110 && timeSinceBeat < 150) {
+        targetY = midY - 10; // R picuda
+        if (timeSinceBeat < 125 && Math.random() < 0.25) {
+          sound.playHeartbeat();
+        }
+      } else if (timeSinceBeat >= 150 && timeSinceBeat < 180) {
+        targetY = midY + 6; // S
+      } else if (timeSinceBeat >= 220 && timeSinceBeat < 280) {
+        targetY = midY - 4; // Onda T
       }
+
+      ecgX = (ecgX + 1.2) % w;
+
+      ecgCtx.strokeStyle = gameState.completed ? '#10b981' : (gameState.remainingSeconds < 600 ? '#f43f5e' : '#06b6d4');
+      ecgCtx.lineWidth = 1.6;
+      ecgCtx.shadowBlur = 6;
+      ecgCtx.shadowColor = ecgCtx.strokeStyle;
+
+      ecgCtx.beginPath();
+      ecgCtx.arc(ecgX, targetY, 1, 0, Math.PI * 2);
+      ecgCtx.fillStyle = ecgCtx.strokeStyle;
+      ecgCtx.fill();
+
+      requestAnimationFrame(renderEcg);
     }
 
-    function playErrorSound() {
-      if (state.soundEnabled && synth) {
-        try {
-          Tone.start();
-          synth.triggerAttackRelease(["F3", "B2"], "8n");
-        } catch (e) {}
-      }
-    }
+    // -------------------------------------------------------------
+    // CRONÓMETRO Y CONSTANTES VITALES
+    // -------------------------------------------------------------
+    let timerInterval = null;
 
-    function toggleAudio() {
-      state.soundEnabled = !state.soundEnabled;
-      const icon = document.getElementById('soundIcon');
-      if (state.soundEnabled) {
-        initAudio();
-        Tone.start();
-        icon.className = "fa-solid fa-volume-high text-cyan-400";
-        showToast("Audio Activado", "Los efectos sonoros de laboratorio ahora están activos.", "info");
-      } else {
-        icon.className = "fa-solid fa-volume-xmark";
-        showToast("Audio Silenciado", "Modo silencioso activado.", "info");
-      }
-    }
-
-    // Cronómetro y constantes vitales
     function startTimer() {
-      if (state.timerInterval) clearInterval(state.timerInterval);
-      state.timerActive = true;
-      state.timerInterval = setInterval(() => {
-        if (state.timeSeconds > 0 && !state.completed) {
-          state.timeSeconds--;
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (!gameState.started || gameState.completed) return;
+
+        if (gameState.remainingSeconds > 0) {
+          gameState.remainingSeconds--;
           updateTimerUI();
-        } else if (state.timeSeconds <= 0 && !state.completed) {
-          clearInterval(state.timerInterval);
-          state.timerActive = false;
-          showToast("TIEMPO AGOTADO", "El ritmo cardíaco de Mateo colapsó antes de aplicar el antídoto. Reinicia la investigación.", "error");
+          if (gameState.remainingSeconds % 5 === 0) saveState();
+        } else {
+          clearInterval(timerInterval);
+          showToast("TIEMPO AGOTADO", "El ritmo cardíaco de Mateo colapsó. Debes reiniciar la reanimación.", "error");
         }
       }, 1000);
     }
 
     function updateTimerUI() {
-      const minutes = Math.floor(state.timeSeconds / 60);
-      const seconds = state.timeSeconds % 60;
-      const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      const el = document.getElementById('timerDisplay');
+      const mins = Math.floor(gameState.remainingSeconds / 60);
+      const secs = gameState.remainingSeconds % 60;
+      const display = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      const el = document.getElementById('headerTimer');
       if (el) el.innerText = display;
 
-      // Deterioro con el tiempo si no se resuelve
-      if (state.timeSeconds < 10 * 60 && !state.completed) {
-        document.getElementById('vitalsBpm').innerText = "165";
-        document.getElementById('vitalsTemp').innerText = "40.2°C";
-        document.getElementById('vitalsStatus').innerText = "PARO INMINENTE";
+      const bpmEl = document.getElementById('headerBpm');
+      const tempEl = document.getElementById('headerTemp');
+
+      if (gameState.completed) {
+        if (bpmEl) bpmEl.innerText = "76";
+        if (tempEl) tempEl.innerText = "36.6";
+      } else if (gameState.remainingSeconds < 600) {
+        if (bpmEl) bpmEl.innerText = "165";
+        if (tempEl) tempEl.innerText = "40.2";
+      } else {
+        if (bpmEl) bpmEl.innerText = "148";
+        if (tempEl) tempEl.innerText = "39.8";
       }
     }
 
-    function startGame() {
-      document.getElementById('introScreen').classList.add('hidden');
-      startTimer();
-      playBeep("G4");
-      showToast("CASO INICIADO", "Fase 1 desbloqueada. Analiza la evidencia del escritorio y consulta tu dossier.", "info");
-    }
-
-    function switchRoom(roomNumber) {
-      if (!state.unlockedRooms.includes(roomNumber)) {
-        playErrorSound();
-        showToast("FASE BLOQUEADA", `Debes resolver los enigmas de la Fase ${roomNumber - 1} antes de ingresar.`, "warning");
+    // -------------------------------------------------------------
+    // GESTIÓN DE SALAS Y NAVEGACIÓN
+    // -------------------------------------------------------------
+    function switchRoom(roomNum) {
+      if (!gameState.unlockedRooms.includes(roomNum)) {
+        sound.playError();
+        showToast("FASE BLOQUEADA", `Debes resolver los enigmas de la Fase ${roomNum - 1} antes de ingresar.`, "warning");
         return;
       }
 
-      state.currentRoom = roomNumber;
-      document.querySelectorAll('.room-section').forEach(el => el.classList.add('hidden'));
-      document.getElementById(`room${roomNumber}`).classList.remove('hidden');
+      gameState.currentRoom = roomNum;
+      saveState();
 
-      document.querySelectorAll('.room-tab').forEach((tab, index) => {
-        if (index + 1 === roomNumber) {
-          tab.classList.add('active-room-tab');
+      // Ocultar todas las salas
+      document.querySelectorAll('.room-view').forEach(r => r.classList.add('hidden'));
+      const activeEl = document.getElementById(`room${roomNum}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      // Actualizar pestañas superiores
+      for (let i = 1; i <= 5; i++) {
+        const tab = document.getElementById(`tabPhase${i}`);
+        if (!tab) continue;
+        if (i === roomNum) {
+          tab.classList.add('active');
         } else {
-          tab.classList.remove('active-room-tab');
+          tab.classList.remove('active');
+        }
+      }
+
+      sound.playKeyClick();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function unlockRoom(roomNum) {
+      if (!gameState.unlockedRooms.includes(roomNum)) {
+        gameState.unlockedRooms.push(roomNum);
+        
+        const tab = document.getElementById(`tabPhase${roomNum}`);
+        const status = document.getElementById(`tabStatus${roomNum}`);
+        if (tab) tab.classList.remove('opacity-60');
+        if (status) {
+          status.className = "text-cyan-400";
+          status.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+        }
+        saveState();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // TECLADOS NUMÉRICOS (Fase 1 y Fase 4)
+    // -------------------------------------------------------------
+    function pressKey(room, char) {
+      sound.playKeyClick();
+      if (room === 1) {
+        if (gameState.pin1.length < 3) {
+          gameState.pin1 += char;
+          document.getElementById('pinDisplay1').innerText = gameState.pin1.padEnd(3, '-');
+        }
+      } else if (room === 4) {
+        if (gameState.pin4.length < 3) {
+          gameState.pin4 += char;
+          document.getElementById('pinDisplay4').innerText = gameState.pin4.padEnd(3, '-');
+        }
+      }
+    }
+
+    function clearPin(room) {
+      sound.playKeyClick();
+      if (room === 1) {
+        gameState.pin1 = '';
+        document.getElementById('pinDisplay1').innerText = '---';
+        document.getElementById('pinFeedback1').innerText = 'Ingresa los 3 dígitos deducidos';
+        document.getElementById('pinFeedback1').className = 'text-xs text-center min-h-[24px] font-tech font-bold text-slate-400';
+      } else if (room === 4) {
+        gameState.pin4 = '';
+        document.getElementById('pinDisplay4').innerText = '---';
+        document.getElementById('pinFeedback4').innerText = 'Ingresa los 3 dígitos [A - B - C]';
+        document.getElementById('pinFeedback4').className = 'text-xs text-center min-h-[24px] font-tech font-bold text-slate-400';
+      }
+    }
+
+    function submitPin(room) {
+      if (room === 1) {
+        const code = gameState.pin1;
+        const fb = document.getElementById('pinFeedback1');
+        
+        // Código Sala 1: 534
+        // D1: Monster (160) / Coca-Cola (34) ≈ 4.7 -> 5 latas
+        // D2: Dosis de riesgo según dossier (500 a 600 mg) = 3 latas seguidas
+        // D3: Concentración guaraná (3 a 4 veces más) -> superior = 4
+        if (code === "534") {
+          sound.playSuccess();
+          fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-emerald-400 animate-pulse";
+          fb.innerText = "¡CÓDIGO CORRECTO! CAJÓN DE APUNTES DESBLOQUEADO";
+          unlockRoom(2);
+          showToast("¡FASE 1 SUPERADA!", "Has identificado la bebida estimulante y sus parámetros. Accediendo a Fase 2 (Coca vs Cocaína)...", "success");
+          setTimeout(() => switchRoom(2), 1100);
+        } else {
+          sound.playError();
+          fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-rose-400";
+          fb.innerText = "CÓDIGO ERRÓNEO. REVISA LA TABLA DE LATAS Y EL DOSSIER";
+          clearPin(1);
+        }
+      } else if (room === 4) {
+        const code = gameState.pin4;
+        const fb = document.getElementById('pinFeedback4');
+
+        // Código Sala 4: 137
+        // Dígito A: Tasa fija ADH (10 a 15 g/hora) -> primer dígito = 1
+        // Dígito B: Rango de coma profundo y LD50 (3.5 a 4.5 g/L) -> entero inferior = 3
+        // Dígito C: Receptores GABA-A con cloro + bloqueo NMDA = 7
+        if (code === "137") {
+          sound.playSuccess();
+          fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-emerald-400 animate-pulse";
+          fb.innerText = "¡CÓDIGO ALCOHOLIMÉTRICO VALIDADO!";
+          unlockRoom(5);
+          showToast("¡FASE 4 SUPERADA!", "Comprendiste la cinética de orden cero del alcohol. Ingresando a Fase 5 (Reanimación UCI)...", "success");
+          setTimeout(() => switchRoom(5), 1100);
+        } else {
+          sound.playError();
+          fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-rose-400";
+          fb.innerText = "CÓDIGO INCORRECTO. REVISA LA TASA FIJA DE ADH Y EL BAC";
+          clearPin(4);
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SELECCIÓN Y VALIDACIÓN DE OPCIONES (Salas 2, 3 y 5)
+    // -------------------------------------------------------------
+    function selectQuiz(room, questionId, option) {
+      sound.playKeyClick();
+      if (room === 2) {
+        gameState.r2_q[questionId] = option;
+        updateQuizOptionUI(2, questionId, option);
+      } else if (room === 3) {
+        gameState.r3_q[questionId] = option;
+        updateQuizOptionUI(3, questionId, option);
+      } else if (room === 5) {
+        gameState.r5_q[questionId] = option;
+        updateQuizOptionUI(5, questionId, option);
+      }
+      saveState();
+    }
+
+    function updateQuizOptionUI(room, qId, selectedOpt) {
+      ['A', 'B'].forEach(opt => {
+        const btn = document.getElementById(`btn_${room}_${qId}_${opt}`);
+        if (btn) {
+          if (opt === selectedOpt) {
+            btn.classList.add('selected');
+          } else {
+            btn.classList.remove('selected');
+          }
         }
       });
-
-      playBeep("A4", "32n");
     }
 
-    function pressKeypad(room, char) {
-      playBeep("E5", "32n");
-      if (room === 1) {
-        if (state.roomAnswers.r1_code.length < 3) {
-          state.roomAnswers.r1_code += char;
-          document.getElementById('codeDisplay1').innerText = state.roomAnswers.r1_code.padEnd(3, '-');
-        }
-      } else if (room === 4) {
-        if (state.roomAnswers.r4_code.length < 3) {
-          state.roomAnswers.r4_code += char;
-          document.getElementById('codeDisplay4').innerText = state.roomAnswers.r4_code.padEnd(3, '-');
-        }
-      }
-    }
-
-    function clearKeypad(room) {
-      playBeep("C4", "32n");
-      if (room === 1) {
-        state.roomAnswers.r1_code = '';
-        document.getElementById('codeDisplay1').innerText = '---';
-        document.getElementById('roomFeedback1').innerText = '';
-      } else if (room === 4) {
-        state.roomAnswers.r4_code = '';
-        document.getElementById('codeDisplay4').innerText = '---';
-        document.getElementById('roomFeedback4').innerText = '';
-      }
-    }
-
-    // Validación de códigos:
-    // Sala 1:
-    // D1: Monster (160) / Coca (34) ≈ 4.7 -> 5 latas
-    // D2: Dosis de riesgo taquicardia según dossier = 3 latas de Monster seguidas
-    // D3: Concentración botánica guaraná (3 a 4 veces más) -> valor superior = 4
-    // Código: 534
-    function submitRoomCode(room) {
-      if (room === 1) {
-        const code = state.roomAnswers.r1_code;
-        const feedback = document.getElementById('roomFeedback1');
-        
-        if (code === "534") {
-          playSuccessSound();
-          feedback.className = "text-xs text-center min-h-[20px] text-emerald-400 font-bold font-tech";
-          feedback.innerText = "¡CÓDIGO CORRECTO! CAJÓN DESBLOQUEADO";
-          unlockNextRoom(2);
-          showToast("¡FASE 1 SUPERADA!", "Has identificado la bebida estimulante y sus parámetros. Accediendo a Fase 2 (El Alijo Andino)...", "success");
-          setTimeout(() => switchRoom(2), 1200);
-        } else {
-          playErrorSound();
-          feedback.className = "text-xs text-center min-h-[20px] text-rose-400 font-bold font-tech";
-          feedback.innerText = "CÓDIGO ERRÓNEO. REVISA LAS LATAS Y EL DOSSIER";
-          clearKeypad(1);
-        }
-      } else if (room === 4) {
-        const code = state.roomAnswers.r4_code;
-        const feedback = document.getElementById('roomFeedback4');
-
-        // Código correcto Sala 4:
-        // Dígito A: Rango ADH (10 a 15 g/hora) -> primer dígito = 1
-        // Dígito B: Rango de coma y LD50 (3.5 a 4.5 g/L) -> entero inferior = 3
-        // Dígito C: Afirmación correcta sobre GABA-A y NMDA = 7
-        // Código: 137
-        if (code === "137") {
-          playSuccessSound();
-          feedback.className = "text-xs text-center min-h-[20px] text-emerald-400 font-bold font-tech";
-          feedback.innerText = "¡CÓDIGO ALCOHOLIMÉTRICO CORRECTO!";
-          unlockNextRoom(5);
-          showToast("¡FASE 4 SUPERADA!", "Comprendiste la cinética de orden cero del alcohol. Ingresando a Fase 5 (Unidad de Reanimación)...", "success");
-          setTimeout(() => switchRoom(5), 1200);
-        } else {
-          playErrorSound();
-          feedback.className = "text-xs text-center min-h-[20px] text-rose-400 font-bold font-tech";
-          feedback.innerText = "CÓDIGO INCORRECTO. REVISA EL RANGO DE ENZIMAS Y LA TABLA BAC";
-          clearKeypad(4);
-        }
-      }
-    }
-
-    // Selección de opciones múltiples para Salas 2, 3 y 5
-    function selectOption(room, questionId, option) {
-      playBeep("F5", "32n");
-      if (room === 2) {
-        state.roomAnswers.r2_q[questionId] = option;
-        document.getElementById(`btn_2_${questionId}_A`).className = option === 'A' ? 'opt-btn p-2.5 rounded-lg bg-indigo-900 border-2 border-indigo-400 text-left transition' : 'opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition';
-        document.getElementById(`btn_2_${questionId}_B`).className = option === 'B' ? 'opt-btn p-2.5 rounded-lg bg-indigo-900 border-2 border-indigo-400 text-left transition' : 'opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition';
-      } else if (room === 3) {
-        state.roomAnswers.r3_q[questionId] = option;
-        document.getElementById(`btn_3_${questionId}_A`).className = option === 'A' ? 'opt-btn p-2.5 rounded-lg bg-emerald-900 border-2 border-emerald-400 text-left transition' : 'opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition';
-        document.getElementById(`btn_3_${questionId}_B`).className = option === 'B' ? 'opt-btn p-2.5 rounded-lg bg-emerald-900 border-2 border-emerald-400 text-left transition' : 'opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition';
-      } else if (room === 5) {
-        state.roomAnswers.r5_q[questionId] = option;
-        document.getElementById(`btn_5_${questionId}_A`).className = option === 'A' ? 'opt-btn p-2.5 rounded-lg bg-amber-900 border-2 border-amber-400 text-left transition' : 'opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition';
-        document.getElementById(`btn_5_${questionId}_B`).className = option === 'B' ? 'opt-btn p-2.5 rounded-lg bg-amber-900 border-2 border-amber-400 text-left transition' : 'opt-btn p-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-left transition';
-      }
-    }
-
-    // Validación Sala 2 (Respuestas correctas: q1=A, q2=B, q3=A)
-    function verifyRoom2() {
-      const { q1, q2, q3 } = state.roomAnswers.r2_q;
-      const fb = document.getElementById('roomFeedback2');
+    // Validación Sala 2 (Respuestas: q1=A, q2=B, q3=A)
+    function validateRoom2() {
+      const { q1, q2, q3 } = gameState.r2_q;
+      const fb = document.getElementById('feedbackRoom2');
 
       if (!q1 || !q2 || !q3) {
-        playErrorSound();
-        fb.className = "text-xs text-center mt-3 text-amber-400 font-tech";
-        fb.innerText = "Debes responder las 3 preguntas de la matriz antes de validar.";
+        sound.playError();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-amber-400";
+        fb.innerText = "Debes responder las 3 preguntas antes de validar.";
         return;
       }
 
       if (q1 === 'A' && q2 === 'B' && q3 === 'A') {
-        playSuccessSound();
-        fb.className = "text-xs text-center mt-3 text-emerald-400 font-bold font-tech";
-        fb.innerText = "¡DIAGNÓSTICO VALIDADO! PERFIL CLÍNICO IDENTIFICADO";
-        unlockNextRoom(3);
-        showToast("¡FASE 2 SUPERADA!", "Has identificado el clorhidrato de cocaína y sus dianas celulares. Accediendo a Fase 3 (Cannabis)...", "success");
-        setTimeout(() => switchRoom(3), 1200);
+        sound.playSuccess();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-emerald-400";
+        fb.innerText = "¡DIAGNÓSTICO APROBADO! MECANISMOS CELULARES IDENTIFICADOS";
+        unlockRoom(3);
+        showToast("¡FASE 2 SUPERADA!", "Has identificado el clorhidrato de cocaína, el transportador DAT y los canales de sodio. Accediendo a Fase 3...", "success");
+        setTimeout(() => switchRoom(3), 1100);
       } else {
-        playErrorSound();
-        fb.className = "text-xs text-center mt-3 text-rose-400 font-bold font-tech";
-        fb.innerText = "PARÁMETROS ERRÓNEOS. REVISA TU LECTURA SOBRE DAT Y CANALES DE SODIO";
+        sound.playError();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
+        fb.innerText = "ERROR EN DIAGNÓSTICO. REVISA EL DOSSIER SOBRE DAT Y VASOESPASMO";
       }
     }
 
-    // Validación Sala 3 (Respuestas correctas: q1=A, q2=B, q3=A)
-    function verifyRoom3() {
-      const { q1, q2, q3 } = state.roomAnswers.r3_q;
-      const fb = document.getElementById('roomFeedback3');
+    // Validación Sala 3 (Respuestas: q1=A, q2=B, q3=A)
+    function validateRoom3() {
+      const { q1, q2, q3 } = gameState.r3_q;
+      const fb = document.getElementById('feedbackRoom3');
 
       if (!q1 || !q2 || !q3) {
-        playErrorSound();
-        fb.className = "text-xs text-center mt-3 text-amber-400 font-tech";
-        fb.innerText = "Debes seleccionar las 3 respuestas botánicas antes de continuar.";
+        sound.playError();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-amber-400";
+        fb.innerText = "Debes responder las 3 preguntas botánicas.";
         return;
       }
 
       if (q1 === 'A' && q2 === 'B' && q3 === 'A') {
-        playSuccessSound();
-        fb.className = "text-xs text-center mt-3 text-emerald-400 font-bold font-tech";
-        fb.innerText = "¡MATRIZ FITOCANNABINOIDE APROBADA!";
-        unlockNextRoom(4);
-        showToast("¡FASE 3 SUPERADA!", "Diferenciaste con éxito el CBD del THC y el metabolito 11-OH-THC. Pasando a Fase 4 (La Barra de la Fiesta)...", "success");
-        setTimeout(() => switchRoom(4), 1200);
+        sound.playSuccess();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-emerald-400";
+        fb.innerText = "¡PARÁMETROS CANNÁBICOS VALIDADOS CON ÉXITO!";
+        unlockRoom(4);
+        showToast("¡FASE 3 SUPERADA!", "Diferenciaste el CBD del 11-OH-THC hepático y la ausencia de CB1 en el tronco encefálico. Ingresando a Fase 4...", "success");
+        setTimeout(() => switchRoom(4), 1100);
       } else {
-        playErrorSound();
-        fb.className = "text-xs text-center mt-3 text-rose-400 font-bold font-tech";
-        fb.innerText = "MATRIZ INCORRECTA. REVISA LA DIGESTIÓN DE COMESTIBLES Y CHARLOTTE FIGI";
+        sound.playError();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
+        fb.innerText = "RESPUESTAS ERRÓNEAS. REVISA LA METABOLIZACIÓN HEPÁTICA Y CHARLOTTE FIGI";
       }
     }
 
-    // Validación Sala 5 (Respuestas correctas: q1=A, q2=A, q3=A)
-    function administerAntidote() {
-      const { q1, q2, q3 } = state.roomAnswers.r5_q;
-      const fb = document.getElementById('roomFeedback5');
+    // Validación Sala 5 (Respuestas: q1=A, q2=A, q3=A)
+    function administerProtocol() {
+      const { q1, q2, q3 } = gameState.r5_q;
+      const fb = document.getElementById('feedbackRoom5');
 
       if (!q1 || !q2 || !q3) {
-        playErrorSound();
-        fb.className = "text-xs text-center mt-3 text-amber-400 font-tech";
-        fb.innerText = "Debes seleccionar las 3 decisiones médicas del protocolo.";
+        sound.playError();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-amber-400";
+        fb.innerText = "Debes seleccionar las 3 intervenciones clínicas.";
         return;
       }
 
       if (q1 === 'A' && q2 === 'A' && q3 === 'A') {
-        state.completed = true;
-        clearInterval(state.timerInterval);
-        playSuccessSound();
+        gameState.completed = true;
+        clearInterval(timerInterval);
+        saveState();
+        sound.playSuccess();
 
+        // Confeti festivo
         if (window.confetti) {
           confetti({
-            particleCount: 130,
-            spread: 85,
+            particleCount: 150,
+            spread: 90,
             origin: { y: 0.6 }
           });
         }
 
-        const elapsed = (35 * 60) - state.timeSeconds;
+        // Calcular tiempo total
+        const elapsed = (35 * 60) - gameState.remainingSeconds;
         const em = Math.floor(elapsed / 60);
         const es = elapsed % 60;
         document.getElementById('finalTimeScore').innerText = `${String(em).padStart(2, '0')}:${String(es).padStart(2, '0')}`;
 
-        document.getElementById('vitalsBpm').innerText = "76";
-        document.getElementById('vitalsTemp').innerText = "36.6°C";
-        document.getElementById('vitalsStatus').innerText = "ESTABILIZADO";
-        document.getElementById('vitalsStatus').className = "font-semibold text-emerald-400";
+        updateTimerUI();
 
-        document.getElementById('room5').classList.add('hidden');
+        // Mostrar pantalla de victoria
+        document.querySelectorAll('.room-view').forEach(r => r.classList.add('hidden'));
         document.getElementById('victoryScreen').classList.remove('hidden');
-        showToast("¡CASO RESUELTO!", "¡Has salvado a Mateo aplicando toxicología médica rigurosa!", "success");
+
+        showToast("¡PACIENTE SALVADO!", "¡Completaste con honores la reanimación toxicológica de Mateo!", "success");
       } else {
-        playErrorSound();
-        fb.className = "text-xs text-center mt-3 text-rose-400 font-bold font-tech";
-        fb.innerText = "ERROR EN PROTOCOLO. EL PACIENTE PERSISTE EN TAQUICARDIA SEVERA";
+        sound.playError();
+        fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
+        fb.innerText = "PROTOCOLO ERRÓNEO. EL PACIENTE PERSISTE EN TAQUICARDIA SEVERA";
       }
     }
 
-    function unlockNextRoom(roomNum) {
-      if (!state.unlockedRooms.includes(roomNum)) {
-        state.unlockedRooms.push(roomNum);
-        const tab = document.getElementById(`roomTab${roomNum}`);
-        const status = document.getElementById(`roomStatus${roomNum}`);
-        if (tab) tab.classList.remove('opacity-60');
-        if (status) {
-          status.className = "text-cyan-400 font-bold";
-          status.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+    // -------------------------------------------------------------
+    // INTERACTIVIDAD Y SIMULADORES FORENSES
+    // -------------------------------------------------------------
+    function inspectCanTab(tab) {
+      sound.playKeyClick();
+      const area = document.getElementById('canContentArea');
+      const bFront = document.getElementById('canTabBtn_front');
+      const bGuarana = document.getElementById('canTabBtn_guarana');
+      const bCoca = document.getElementById('canTabBtn_coca');
+
+      bFront.className = "p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-center";
+      bGuarana.className = "p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-center";
+      bCoca.className = "p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-center";
+
+      if (tab === 'front') {
+        bFront.className = "p-2 rounded-lg bg-cyan-950 border border-cyan-500 text-cyan-300 text-center font-bold";
+        area.innerHTML = `
+          <p><strong>Declaración frontal:</strong> Contiene <span class="text-cyan-400 font-bold font-mono">160 mg de cafeína sintética pura</span> por lata de 500 ml.</p>
+          <p class="text-[11px] text-slate-400">Mecanismo: Bloquea competitivamente los receptores cerebrales de adenosina impidiendo sentir el cansancio y forzando la liberación de adrenalina.</p>
+        `;
+      } else if (tab === 'guarana') {
+        bGuarana.className = "p-2 rounded-lg bg-purple-950 border border-purple-500 text-purple-300 text-center font-bold";
+        area.innerHTML = `
+          <p><strong>Ingredientes en letra pequeña:</strong> <span class="text-purple-400 font-bold">Extracto de guaraná (3-4x más cafeína que el café)</span> + <span class="text-amber-400 font-bold">Taurina (1,000 mg)</span>.</p>
+          <p class="text-[11px] text-slate-400">Peligro: Los taninos del guaraná retardan la absorción estomacal prolongando el estímulo 10 horas. La taurina abre el calcio miocárdico forzando contracciones cardíacas violentas.</p>
+        `;
+      } else if (tab === 'coca') {
+        bCoca.className = "p-2 rounded-lg bg-amber-950 border border-amber-500 text-amber-300 text-center font-bold";
+        area.innerHTML = `
+          <p><strong>Cálculo de Equivalencias:</strong> 1 lata de Monster (160 mg) / 1 lata de Coca-Cola (34 mg) ≈ <span class="text-amber-400 font-bold font-mono">4.7 latas de Coca-Cola</span>.</p>
+          <p class="text-[11px] text-slate-400">Con 3 latas seguidas, Mateo ingirió el equivalente a casi 15 Coca-Colas o 5 cafés juntos, rebasando el umbral de intoxicación aguda.</p>
+        `;
+      }
+    }
+
+    function runSpectrumScan(sample) {
+      sound.playKeyClick();
+      const bHojas = document.getElementById('specBtn_hojas');
+      const bPolvo = document.getElementById('specBtn_polvo');
+      const out = document.getElementById('spectrumOutput');
+
+      if (sample === 'hojas') {
+        bHojas.className = "touch-btn px-2.5 py-1 rounded-lg bg-emerald-950 border border-emerald-500 text-emerald-300 text-xs font-semibold";
+        bPolvo.className = "touch-btn px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-semibold";
+        out.innerHTML = `
+          <p class="text-emerald-300 font-semibold mb-1">Muestra #1: Hojas en Acullico Tradicional</p>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Absorción gástrica y mucosa lenta (pico plasmático a 60 min). Niveles plasmáticos muy bajos y estables que mitigan la fatiga andina sin saturar transportadores ni causar vasoespasmo coronario.
+          </p>
+        `;
+      } else {
+        bPolvo.className = "touch-btn px-2.5 py-1 rounded-lg bg-rose-950 border border-rose-500 text-rose-300 text-xs font-semibold";
+        bHojas.className = "touch-btn px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-semibold";
+        out.innerHTML = `
+          <p class="text-rose-400 font-semibold mb-1">Muestra #2: Clorhidrato de Cocaína Puro</p>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            Absorción mucosa inmediata (pico violento en minutos). Bloquea la aspiradora DAT disparando la dopamina al +1,000%, y bloquea los <strong>canales de sodio cardíacos</strong>, cerrando las arterias coronarias en vasoespasmo letal.
+          </p>
+        `;
+      }
+    }
+
+    function updateEdibleSim(val) {
+      document.getElementById('sliderTimeVal').innerText = `${val} minutos`;
+      const txt = document.getElementById('edibleSimText');
+      const label = document.getElementById('sliderMetaboliteVal');
+
+      if (val < 45) {
+        label.innerText = "Digestión estomacal (sin efecto aparente)";
+        label.className = "text-slate-400 font-bold text-[11px]";
+        txt.innerHTML = "Durante los primeros 45 minutos el alimento permanece en el estómago. El usuario cree erróneamente que 'no le hizo efecto' y suele redosificarse.";
+      } else if (val >= 45 && val < 90) {
+        label.innerText = "Metabolismo hepático: Creando 11-OH-THC";
+        label.className = "text-amber-400 font-bold text-[11px]";
+        txt.innerHTML = "Al cruzar el hígado (metabolismo de primer paso), la enzima CYP2C9 transforma el THC en <strong>11-hidroxi-THC</strong>, una molécula hasta cuatro veces más potente que cruza fácilmente la barrera hematoencefálica.";
+      } else {
+        label.innerText = "Sobredosis masiva por múltiples dosis";
+        label.className = "text-rose-400 font-bold text-[11px]";
+        txt.innerHTML = "Hacia los 90-120 minutos todas las gomitas ingeridas explotan a la vez en el torrente sanguíneo, desatando pánico, despersonalización y taquicardia violenta.";
+      }
+    }
+
+    function updateBacGauge(val) {
+      const label = document.getElementById('bacGaugeLabel');
+      const card = document.getElementById('bacStatusCard');
+      label.innerText = `BAC: ${val.toFixed(1)} g/L`;
+
+      if (val < 0.8) {
+        card.className = "p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300";
+        card.innerHTML = "<strong class='text-cyan-400'>Nivel Leve (0.2 - 0.5 g/L):</strong> Desinhibición y euforia social. Reflejos ligeramente retardados.";
+      } else if (val >= 0.8 && val < 2.0) {
+        card.className = "p-3 rounded-lg bg-amber-950/40 border border-amber-900 text-xs text-slate-300";
+        card.innerHTML = "<strong class='text-amber-400'>Límite Legal (0.8 - 1.5 g/L):</strong> Habla pastosa, marcha tambaleante y pérdida de juicio de peligro.";
+      } else if (val >= 2.0 && val < 3.5) {
+        card.className = "p-3 rounded-lg bg-orange-950/50 border border-orange-900 text-xs text-slate-300";
+        card.innerHTML = "<strong class='text-orange-400'>Estado de Estupor (2.0 - 3.0 g/L):</strong> Imposibilidad de mantenerse de pie, vómitos incontrolables y altísimo riesgo de broncoaspiración.";
+      } else {
+        card.className = "p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-xs text-slate-300";
+        card.innerHTML = "<strong class='text-rose-400'>Coma Profundo / LD50 (3.5 - 4.5 g/L):</strong> Abolición de reflejos protectores, parálisis del bulbo raquídeo y paro respiratorio fulminante.";
+      }
+    }
+
+    // -------------------------------------------------------------
+    // GESTIÓN DEL DOSSIER DE ESTUDIO
+    // -------------------------------------------------------------
+    function toggleDossierModal() {
+      sound.playKeyClick();
+      const modal = document.getElementById('dossierModal');
+      modal.classList.toggle('hidden');
+    }
+
+    function openDossierTab(tabName) {
+      sound.playKeyClick();
+      const tabs = ['bebidas', 'coca', 'cannabis', 'alcohol', 'kahoot'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`dossierTab_${t}`);
+        const content = document.getElementById(`dossierContent_${t}`);
+        if (t === tabName) {
+          if (btn) btn.className = "touch-btn px-3 py-1.5 rounded-lg bg-amber-600 text-white font-bold whitespace-nowrap";
+          if (content) content.classList.remove('hidden');
+        } else {
+          if (btn) btn.className = "touch-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap";
+          if (content) content.classList.add('hidden');
         }
-      }
+      });
+      // Asegurarse de que el modal esté visible
+      document.getElementById('dossierModal').classList.remove('hidden');
     }
 
-    // Modal sin alert()
-    function showToast(title, message, type = "info") {
-      const box = document.getElementById('messageModalBox');
-      const icon = document.getElementById('messageModalIcon');
-      const titleEl = document.getElementById('messageModalTitle');
-      const textEl = document.getElementById('messageModalText');
-
-      titleEl.innerText = title;
-      textEl.innerText = message;
-
-      if (type === 'success') {
-        box.className = "glass-panel w-full max-w-md rounded-2xl p-6 border border-emerald-500 shadow-2xl text-center";
-        icon.className = "w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 bg-emerald-950 text-emerald-400 border border-emerald-500/50";
-        icon.innerHTML = '<i class="fa-solid fa-check"></i>';
-      } else if (type === 'error') {
-        box.className = "glass-panel w-full max-w-md rounded-2xl p-6 border border-rose-500 shadow-2xl text-center";
-        icon.className = "w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 bg-rose-950 text-rose-400 border border-rose-500/50";
-        icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-      } else if (type === 'warning') {
-        box.className = "glass-panel w-full max-w-md rounded-2xl p-6 border border-amber-500 shadow-2xl text-center";
-        icon.className = "w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 bg-amber-950 text-amber-400 border border-amber-500/50";
-        icon.innerHTML = '<i class="fa-solid fa-lock"></i>';
+    // -------------------------------------------------------------
+    // AUDIO Y CONTROLES
+    // -------------------------------------------------------------
+    function toggleSound() {
+      sound.init();
+      sound.enabled = !sound.enabled;
+      const icon = document.getElementById('soundIcon');
+      if (sound.enabled) {
+        icon.className = "fa-solid fa-volume-high text-cyan-400 text-xs";
+        sound.playSuccess();
+        showToast("Audio Activado", "Los sonidos de laboratorio y monitor clínico están activos.", "info");
       } else {
-        box.className = "glass-panel w-full max-w-md rounded-2xl p-6 border border-cyan-500 shadow-2xl text-center";
-        icon.className = "w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3 bg-cyan-950 text-cyan-400 border border-cyan-500/50";
-        icon.innerHTML = '<i class="fa-solid fa-info"></i>';
+        icon.className = "fa-solid fa-volume-xmark text-xs";
+        showToast("Audio Silenciado", "Modo silencioso activado.", "info");
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SISTEMA DE TOASTS FLOTANTES AUTO-DESVANECIENTES
+    // -------------------------------------------------------------
+    function showToast(title, msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 p-3 rounded-xl glass-card border shadow-xl flex items-start gap-2.5 text-xs';
+      
+      let iconHtml = '<i class="fa-solid fa-info-circle text-cyan-400 text-sm mt-0.5"></i>';
+      if (type === 'success') {
+        toast.classList.add('border-emerald-500/80', 'bg-emerald-950/90');
+        iconHtml = '<i class="fa-solid fa-circle-check text-emerald-400 text-sm mt-0.5"></i>';
+      } else if (type === 'error') {
+        toast.classList.add('border-rose-500/80', 'bg-rose-950/90');
+        iconHtml = '<i class="fa-solid fa-circle-xmark text-rose-400 text-sm mt-0.5"></i>';
+      } else if (type === 'warning') {
+        toast.classList.add('border-amber-500/80', 'bg-amber-950/90');
+        iconHtml = '<i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm mt-0.5"></i>';
+      } else {
+        toast.classList.add('border-cyan-500/80', 'bg-slate-950/90');
       }
 
-      document.getElementById('messageModal').classList.remove('hidden');
+      toast.innerHTML = `
+        ${iconHtml}
+        <div class="flex-1 min-w-0">
+          <strong class="font-display font-bold text-white block">${title}</strong>
+          <span class="text-slate-300 leading-snug block">${msg}</span>
+        </div>
+      `;
+
+      container.appendChild(toast);
+
+      // Animación de entrada
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+        toast.classList.add('translate-y-0', 'opacity-100');
+      });
+
+      // Auto-eliminar tras 2.8 segundos
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 2800);
     }
 
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
+    // -------------------------------------------------------------
+    // INICIAR Y REINICIAR
+    // -------------------------------------------------------------
+    function startGame() {
+      sound.init();
+      gameState.started = true;
+      document.getElementById('introScreen').classList.add('hidden');
+      startTimer();
+      saveState();
+      sound.playSuccess();
+      showToast("CASO INICIADO", "Fase 1 activada. Consulta las evidencias del escritorio y tu dossier.", "info");
+      switchRoom(1);
     }
 
-    function openHelpModal() {
-      document.getElementById('helpModal').classList.remove('hidden');
+    function confirmRestartGame() {
+      sound.playKeyClick();
+      document.getElementById('confirmRestartModal').classList.remove('hidden');
     }
 
-    function restartGame() {
+    function closeRestartModal() {
+      sound.playKeyClick();
+      document.getElementById('confirmRestartModal').classList.add('hidden');
+    }
+
+    function executeRestartGame() {
+      localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
+
+    // -------------------------------------------------------------
+    // RESTAURACIÓN AL CARGAR LA PÁGINA
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedState();
+      renderEcg();
+
+      // Si ya había empezado
+      if (gameState.started) {
+        document.getElementById('introScreen').classList.add('hidden');
+        startTimer();
+        gameState.unlockedRooms.forEach(unlockRoom);
+        switchRoom(gameState.currentRoom);
+      }
+
+      // Si estaba completado
+      if (gameState.completed) {
+        document.querySelectorAll('.room-view').forEach(r => r.classList.add('hidden'));
+        document.getElementById('victoryScreen').classList.remove('hidden');
+      }
+
+      // Restaurar selecciones de respuestas
+      ['r2_q', 'r3_q', 'r5_q'].forEach(group => {
+        const roomNum = group === 'r2_q' ? 2 : (group === 'r3_q' ? 3 : 5);
+        Object.entries(gameState[group]).forEach(([qId, val]) => {
+          if (val) updateQuizOptionUI(roomNum, qId, val);
+        });
+      });
+
+      updateTimerUI();
+    });
   </script>
 </body>
 </html>
