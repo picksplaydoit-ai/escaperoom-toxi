@@ -523,21 +523,21 @@
 
             <div class="space-y-2">
               <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span class="text-cyan-400 font-bold font-mono">DÍGITO 1 (Equivalencia en latas de Coca-Cola):</span>
-                Revisa en tu dossier cuántas latas enteras de Coca-Cola (34 mg c/u) equivalen a la cafeína de <strong>UNA lata de Monster de 500 ml (160 mg)</strong>: 160 mg / 34 mg ≈ 4.7 latas.
-                <span class="block text-slate-400 text-[11px] mt-0.5">→ El número entero más cercano (alrededor de 5 latas) es el primer dígito.</span>
+                <span class="text-cyan-400 font-bold font-mono">DÍGITO 1 (Equivalencia en latas de refresco):</span>
+                Consulta en el Dossier el contenido exacto de cafeína de <strong>una lata de Monster (500 ml)</strong> y el de <strong>una lata clásica de Coca-Cola</strong>. Calcula a cuántas latas de refresco equivale la cafeína de una sola Monster consumida por Mateo.
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ Redondea el resultado matemático al <strong>número entero más cercano</strong>: ese entero es tu primer dígito.</span>
               </div>
 
               <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span class="text-amber-400 font-bold font-mono">DÍGITO 2 (Umbral de taquicardia y temblor):</span>
-                Según la sección <em>"Dosis de riesgo y malestar (500 a 600 mg)"</em>, ¿cuál es el número mínimo de latas de Monster seguidas con el cual una persona entra en riesgo agudo de taquicardia y ansiedad?
-                <span class="block text-slate-400 text-[11px] mt-0.5">→ Dicho número de latas (3 a 4 latas) toma su valor mínimo: ese es el segundo dígito.</span>
+                <span class="text-amber-400 font-bold font-mono">DÍGITO 2 (Umbral de taquicardia y malestar agudo):</span>
+                Mateo comenzó con temblor de manos y taquicardia severa. Consulta en el Dossier la sección de <em>"Dosis de riesgo y malestar"</em> (en mg de cafeína).
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ ¿Cuál es el <strong>número mínimo de latas completas de Monster</strong> que se requieren ingerir para superar el piso de este umbral de riesgo agudo? Ese número de latas es tu segundo dígito.</span>
               </div>
 
               <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span class="text-purple-400 font-bold font-mono">DÍGITO 3 (Potencia botánica del Guaraná):</span>
-                Revisa la sección de Guaraná. ¿Cuántas veces más concentrada en cafeína es la semilla de guaraná respecto a un grano de café tradicional?
-                <span class="block text-slate-400 text-[11px] mt-0.5">→ El dossier indica un rango: "3 a 4 veces más concentrada". Toma el <strong>valor superior</strong> del rango como tu tercer dígito.</span>
+                <span class="text-purple-400 font-bold font-mono">DÍGITO 3 (Factor multiplicador del Guaraná):</span>
+                En la etiqueta de la lata se encontró extracto de <em>Paullinia cupana</em> (Guaraná). Consulta en el Dossier cuántas veces más concentrada en cafeína es la semilla de guaraná en comparación con un grano de café estándar.
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ El informe define un rango multiplicador (de X a Y veces). El <strong>límite superior</strong> de ese factor de potencia botánica es tu tercer dígito.</span>
               </div>
             </div>
           </div>
@@ -662,14 +662,17 @@
             <!-- Pregunta 2.1 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                1. ¿Por qué el masticado andino tradicional de hojas de coca no causa infartos ni la adicción destructiva del clorhidrato puro?
+                1. ¿Por qué el masticado andino tradicional de hojas de coca (acullico) no induce arritmias malignas ni la adicción compulsiva del clorhidrato puro?
               </p>
               <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(2, 'q1', 'A')" id="btn_2_q1_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Libera microcantidades de absorción digestiva/mucosa muy lentas (pico a 60 min) sin disparar picos tóxicos en sangre.
+                  <strong>A)</strong> La acidez gástrica y la saliva neutralizan e hidrolizan el 100% de los alcaloides antes de que lleguen a la circulación.
                 </button>
                 <button onclick="selectQuiz(2, 'q1', 'B')" id="btn_2_q1_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Porque las hojas de coca no contienen ningún alcaloide químico activo.
+                  <strong>B)</strong> Libera microcantidades de absorción mucosa/digestiva lenta (pico plasmático a 60 min) con niveles plasmáticos estables que no saturan el sistema de recompensa.
+                </button>
+                <button onclick="selectQuiz(2, 'q1', 'C')" id="btn_2_q1_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Porque las hojas de coca carecen de afinidad cardiovascular y su acción se limita a receptores sensoriales linguales.
                 </button>
               </div>
             </div>
@@ -677,14 +680,17 @@
             <!-- Pregunta 2.2 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                2. ¿Cuál es la "aspiradora neuronal" específica que la cocaína bloquea provocando una acumulación de dopamina de hasta 1,000% en la sinapsis?
+                2. ¿Cuál es el transportador de membrana neuronal que el clorhidrato de cocaína bloquea provocando una acumulación masiva de dopamina de hasta +1,000% en la hendidura sináptica?
               </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 <button onclick="selectQuiz(2, 'q2', 'A')" id="btn_2_q2_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> El receptor de insulina hepático.
+                  <strong>A)</strong> Transportador vesicular VMAT-2.
                 </button>
                 <button onclick="selectQuiz(2, 'q2', 'B')" id="btn_2_q2_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> El transportador DAT (transportador de dopamina).
+                  <strong>B)</strong> Transportador neuronal GLUT-4.
+                </button>
+                <button onclick="selectQuiz(2, 'q2', 'C')" id="btn_2_q2_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Transportador DAT (Dopamine Transporter).
                 </button>
               </div>
             </div>
@@ -692,14 +698,17 @@
             <!-- Pregunta 2.3 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                3. ¿Qué mecanismo cardíaco letal explica las arritmias malignas y el infarto fulminante en personas jóvenes por cocaína?
+                3. ¿Qué mecanismos fisiopatológicos directos explican las arritmias malignas y el infarto agudo en personas jóvenes sanas consumidoras de cocaína?
               </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(2, 'q3', 'A')" id="btn_2_q3_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Bloqueo de canales de sodio miocárdicos y cierre por vasoespasmo coronario.
+                  <strong>A)</strong> Bloqueo de canales de sodio miocárdicos (Nav) dependientes de voltaje y vasoespasmo coronario severo por estimulación alfa-1 adrenérgica.
                 </button>
                 <button onclick="selectQuiz(2, 'q3', 'B')" id="btn_2_q3_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Congelamiento instantáneo de los glóbulos rojos pulmonares.
+                  <strong>B)</strong> Estimulación colinérgica masiva con bradicardia sinusal refractaria y necrosis tisular.
+                </button>
+                <button onclick="selectQuiz(2, 'q3', 'C')" id="btn_2_q3_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Destrucción osmótica endotelial por depósito directo de cristales alcalinos insolubles.
                 </button>
               </div>
             </div>
@@ -803,14 +812,17 @@
             <!-- Pregunta 3.1 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                1. ¿Por qué comer comestibles cannábicos (edibles) es una trampa que suele causar sobredosis severas a diferencia de fumar?
+                1. ¿Por qué el consumo de comestibles cannábicos (edibles) presenta un riesgo toxicológico de sobredosis y crisis de pánico mucho más elevado que fumar?
               </p>
               <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(3, 'q1', 'A')" id="btn_3_q1_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Tarda 45 a 120 min en digerirse; al redosificarse, el hígado convierte el THC en <em>11-hidroxi-THC</em> (hasta 4 veces más potente).
+                  <strong>A)</strong> La absorción digestiva tarda de 45 a 120 min; al pasar por el metabolismo de primer paso hepático, el THC se convierte en 11-hidroxi-THC (hasta 4 veces más potente).
                 </button>
                 <button onclick="selectQuiz(3, 'q1', 'B')" id="btn_3_q1_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Porque los comestibles destruyen el estómago con ácido clorhídrico puro.
+                  <strong>B)</strong> La combinación con azúcares y lípidos transforma al cannabinoide en un alcaloide agonista nicotínico de acción inmediata.
+                </button>
+                <button onclick="selectQuiz(3, 'q1', 'C')" id="btn_3_q1_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Porque la digestión destruye los receptores CB2 periféricos dejando sin frenos inmunológicos al sistema nervioso central.
                 </button>
               </div>
             </div>
@@ -818,14 +830,17 @@
             <!-- Pregunta 3.2 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                2. En el caso de Charlotte Figi, ¿qué compuesto salvó su vida al reducir sus convulsiones sin intoxicarla ni causarle efecto psicoactivo?
+                2. En el caso de Charlotte Figi (Síndrome de Dravet), ¿qué fitocannabinoide redujo drásticamente sus crisis convulsivas careciendo de efecto eufórico/psicoactivo?
               </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 <button onclick="selectQuiz(3, 'q2', 'A')" id="btn_3_q2_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> El THC puro a dosis elevadas.
+                  <strong>A)</strong> Delta-9-THC suprafisiológico.
                 </button>
                 <button onclick="selectQuiz(3, 'q2', 'B')" id="btn_3_q2_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> El CBD (Cannabidiol).
+                  <strong>B)</strong> Cannabidiol (CBD).
+                </button>
+                <button onclick="selectQuiz(3, 'q2', 'C')" id="btn_3_q2_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Tetrahidrocannabivarina sintética.
                 </button>
               </div>
             </div>
@@ -833,14 +848,17 @@
             <!-- Pregunta 3.3 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                3. ¿Por qué el médico sabe con certeza que Mateo NO morirá de un paro respiratorio fulminante directo por sobredosis de THC?
+                3. Desde el punto de vista neuroanatómico, ¿por qué una sobredosis de THC prácticamente NUNCA produce un paro respiratorio fulminante directo?
               </p>
               <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(3, 'q3', 'A')" id="btn_3_q3_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Porque en el tronco encefálico (centros respiratorios vitales) casi no existen receptores CB1.
+                  <strong>A)</strong> El THC estimula de forma refleja el centro frénico forzando una hiperventilación automática constante.
                 </button>
                 <button onclick="selectQuiz(3, 'q3', 'B')" id="btn_3_q3_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Porque el cerebro elimina el THC en menos de 2 segundos.
+                  <strong>B)</strong> Porque en el tronco encefálico (centros cardiorrespiratorios vitales) casi no existen receptores cannabinoides CB1.
+                </button>
+                <button onclick="selectQuiz(3, 'q3', 'C')" id="btn_3_q3_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Las enzimas alveolares pulmonares inactivan y oxidan el 100% del fitocannabinoide en cuestión de segundos.
                 </button>
               </div>
             </div>
@@ -938,24 +956,27 @@
 
             <div class="space-y-2">
               <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span class="text-rose-400 font-bold font-mono">DÍGITO A (Capacidad hepática en Cinética Cero):</span>
-                Revisa a qué tasa fija quema el alcohol por hora la enzima Alcohol Deshidrogenasa (ADH).
-                <span class="block text-slate-400 text-[11px] mt-0.5">→ El dossier indica una tasa fija de <strong>10 a 15 g/hora</strong>. Toma el <strong>primer dígito</strong> de este rango como tu dígito A.</span>
+                <span class="text-rose-400 font-bold font-mono">DÍGITO A (Cinética de Orden Cero y saturación de ADH):</span>
+                El hígado de Mateo colapsó por saturación enzimática de la Alcohol Deshidrogenasa (ADH). Consulta en el Dossier la sección de <em>Cinética Cero</em> para conocer la <strong>tasa constante (en gramos/hora)</strong> a la que el cuerpo humano metaboliza el alcohol puro sin importar cuánto beba.
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ Esta tasa constante está expresada como un rango de dos cifras (de X a Y g/hora). La <strong>cifra de las decenas</strong> (el primer dígito común de este rango) es tu dígito A.</span>
               </div>
 
               <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span class="text-amber-400 font-bold font-mono">DÍGITO B (Umbral de Coma Profundo y LD50):</span>
-                Revisa la escala BAC. ¿Cuántos g/L marcan el límite de inicio del coma profundo y la LD50 en adultos?
-                <span class="block text-slate-400 text-[11px] mt-0.5">→ La tabla marca de <strong>3.5 a 4.5 g/L</strong>. Toma el <strong>número entero inferior</strong> (sin decimales) como tu dígito B.</span>
+                <span class="text-amber-400 font-bold font-mono">DÍGITO B (Umbral crítico de Coma Profundo y LD50):</span>
+                Mateo ingresó en estado crítico con riesgo de paro respiratorio. Revisa en el Dossier la tabla de <strong>Escala BAC y Dosis Letal</strong> para ubicar a partir de qué concentración en sangre (en g/L) se desencadena el coma etílico profundo y la pérdida de reflejos protectores en personas no tolerantes.
+                <span class="block text-slate-400 text-[11px] mt-0.5">→ Toma la <strong>parte entera</strong> (el número antes del punto decimal) de dicho umbral crítico de inicio de coma como tu dígito B.</span>
               </div>
 
               <div class="p-2.5 rounded-lg bg-slate-950 border border-slate-800/80">
-                <span class="text-cyan-400 font-bold font-mono">DÍGITO C (Interruptores Neuronales GABA & NMDA):</span>
-                ¿Cuál de las siguientes afirmaciones describe con precisión molecular el apagado cerebral por alcohol?<br>
-                <strong>(2)</strong> El alcohol destruye el cráneo y no cruza la barrera hematoencefálica.<br>
-                <strong>(7)</strong> Abre las puertas al cloro en receptores GABA-A (hiperpolarización) y bloquea receptores NMDA en el hipocampo (lagunas mentales).<br>
-                <strong>(9)</strong> Genera combustible instantáneo de glucosa en el cerebelo.<br>
-                <span class="block text-slate-400 text-[11px] mt-0.5">→ El número entre paréntesis de la afirmación verdadera es tu dígito C.</span>
+                <span class="text-cyan-400 font-bold font-mono">DÍGITO C (Neuroquímica de receptores GABA y NMDA):</span>
+                Descifra cuál de los siguientes enunciados describe con exactitud los mecanismos moleculares del alcohol en el sistema nervioso según el Dossier:<br>
+                <div class="mt-1.5 space-y-1 text-slate-300 font-sans pl-2 border-l-2 border-cyan-500/40">
+                  <p><strong>(2)</strong> Estimula receptores dopaminérgicos D2 acelerando la síntesis de glucosa en el hipocampo sin afectar canales iónicos.</p>
+                  <p><strong>(5)</strong> Inhibe irreversiblemente la acetilcolinesterasa muscular periférica generando parálisis espástica ascendente.</p>
+                  <p><strong>(7)</strong> Modula positivamente receptores GABA-A (abriendo canales de Cl⁻ con hiperpolarización) y bloquea receptores de glutamato NMDA en el hipocampo (amnesia/blackouts).</p>
+                  <p><strong>(9)</strong> Se une con alta afinidad a receptores adrenérgicos beta-1 aumentando el flujo sanguíneo coronario.</p>
+                </div>
+                <span class="block text-slate-400 text-[11px] mt-1">→ El número entre paréntesis de la afirmación farmacológica correcta es tu dígito C.</span>
               </div>
             </div>
           </div>
@@ -1045,14 +1066,17 @@
             <!-- Decisión 5.1 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                1. ¿Qué fármaco de urgencias se utiliza para revertir la agitación psicomotriz, las arritmias por exceso simpático y prevenir convulsiones sin desencadenar vasoespasmo?
+                1. Paciente con taquicardia severa (148 BPM), fiebre maligna (39.8°C), diaforesis y agitación simpaticomimética por sobredosis de estimulantes. ¿Cuál es el tratamiento farmacológico inicial de elección?
               </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(5, 'q1', 'A')" id="btn_5_q1_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Benzodiacepinas intravenosas (Diazepam/Lorazepam) y enfriamiento activo.
+                  <strong>A)</strong> Benzodiacepinas intravenosas (Diazepam/Lorazepam) y medios físicos de enfriamiento activo.
                 </button>
                 <button onclick="selectQuiz(5, 'q1', 'B')" id="btn_5_q1_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Inyectar adrenalina y cafeína pura para despertarlo de golpe.
+                  <strong>B)</strong> Betabloqueadores puros no selectivos (Propranolol) en bolo intravenoso rápido.
+                </button>
+                <button onclick="selectQuiz(5, 'q1', 'C')" id="btn_5_q1_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Inyección de sulfato de atropina y adrenalina para forzar el automatismo sinusal.
                 </button>
               </div>
             </div>
@@ -1060,14 +1084,17 @@
             <!-- Decisión 5.2 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                2. Para prevenir la muerte fulminante por asfixia si Mateo vomita mientras se encuentra estuporoso por el alcohol, ¿en qué posición protectora debe colocarse?
+                2. Mateo presenta estupor profundo por alcohol etílico y vómitos inducidos por la sobredosis de comestibles. ¿Cuál es la maniobra física inmediata obligatoria para proteger su vía aérea?
               </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(5, 'q2', 'A')" id="btn_5_q2_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Posición Lateral de Seguridad (PLS) de lado para proteger la vía aérea.
+                  <strong>A)</strong> Mantener al paciente en decúbito supino boca arriba con hiperextensión cervical sin almohada.
                 </button>
                 <button onclick="selectQuiz(5, 'q2', 'B')" id="btn_5_q2_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Acostado boca arriba sin almohada para que respire al techo.
+                  <strong>B)</strong> Colocación inmediata en Posición Lateral de Seguridad (PLS) para prevenir la broncoaspiración mortal.
+                </button>
+                <button onclick="selectQuiz(5, 'q2', 'C')" id="btn_5_q2_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Inducción forzada del vómito con eméticos irritantes gástricos en posición sentada.
                 </button>
               </div>
             </div>
@@ -1075,14 +1102,17 @@
             <!-- Decisión 5.3 -->
             <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
               <p class="text-xs text-slate-200 font-semibold">
-                3. ¿Qué soporte hidroelectrolítico es vital para estabilizar el miocardio tras la pérdida excesiva por diuresis de la cafeína y la taurina?
+                3. Para estabilizar la membrana miocárdica y prevenir arritmias ventriculares malignas secundarias a la diuresis excesiva por cafeína, ¿qué reposición intravenosa es prioritaria?
               </p>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="grid grid-cols-1 gap-2 text-xs">
                 <button onclick="selectQuiz(5, 'q3', 'A')" id="btn_5_q3_A" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>A)</strong> Suero salino intravenoso con reposición de Potasio y Magnesio.
+                  <strong>A)</strong> Restricción hídrica absoluta y diuréticos de asa (Furosemida) a dosis elevadas.
                 </button>
                 <button onclick="selectQuiz(5, 'q3', 'B')" id="btn_5_q3_B" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
-                  <strong>B)</strong> Administrar diuréticos para quitarle más agua al cuerpo.
+                  <strong>B)</strong> Infusión rápida de bicarbonato de sodio hipertónico sin monitorización iónica.
+                </button>
+                <button onclick="selectQuiz(5, 'q3', 'C')" id="btn_5_q3_C" class="quiz-option touch-btn p-2.5 rounded-lg bg-slate-900 text-left">
+                  <strong>C)</strong> Infusión de suero salino cristaloide con monitorización y reposición de Magnesio y Potasio.
                 </button>
               </div>
             </div>
@@ -1956,7 +1986,7 @@
     }
 
     function updateQuizOptionUI(room, qId, selectedOpt) {
-      ['A', 'B'].forEach(opt => {
+      ['A', 'B', 'C'].forEach(opt => {
         const btn = document.getElementById(`btn_${room}_${qId}_${opt}`);
         if (btn) {
           if (opt === selectedOpt) {
@@ -1968,7 +1998,7 @@
       });
     }
 
-    // Validación Sala 2 (Respuestas: q1=A, q2=B, q3=A)
+    // Validación Sala 2 (Respuestas: q1=B, q2=C, q3=A)
     function validateRoom2() {
       const { q1, q2, q3 } = gameState.r2_q;
       const fb = document.getElementById('feedbackRoom2');
@@ -1980,26 +2010,26 @@
         return;
       }
 
-      if (q1 === 'A' && q2 === 'B' && q3 === 'A') {
+      if (q1 === 'B' && q2 === 'C' && q3 === 'A') {
         sound.playSuccess();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-emerald-400";
         fb.innerText = "¡DIAGNÓSTICO APROBADO! MECANISMOS CELULARES IDENTIFICADOS";
         markRoomCompleted(2);
         unlockRoom(3);
-        showToast("¡FASE 2 SUPERADA!", "Has identificado el clorhidrato de cocaína, el transportador DAT y los canales de sodio. Accediendo a Fase 3...", "success");
+        showToast("¡FASE 2 SUPERADA!", "Has identificado la cinética del acullico, el transportador DAT y los canales de sodio. Accediendo a Fase 3...", "success");
         setTimeout(() => switchRoom(3), 1100);
       } else {
         sound.playError();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
         let hints = [];
-        if (q1 !== 'A') hints.push('Pregunta 1 (absorción lenta del acullico)');
-        if (q2 !== 'B') hints.push('Pregunta 2 (transportador DAT)');
-        if (q3 !== 'A') hints.push('Pregunta 3 (canales de sodio miocárdicos y vasoespasmo)');
-        fb.innerText = `Revisa: ${hints.join(', ')}`;
+        if (q1 !== 'B') hints.push('Pregunta 1 (cinética del acullico)');
+        if (q2 !== 'C') hints.push('Pregunta 2 (transportador DAT)');
+        if (q3 !== 'A') hints.push('Pregunta 3 (canales Nav y vasoespasmo)');
+        fb.innerText = `Revisa en el Dossier: ${hints.join(', ')}`;
       }
     }
 
-    // Validación Sala 3 (Respuestas: q1=A, q2=B, q3=A)
+    // Validación Sala 3 (Respuestas: q1=A, q2=B, q3=B)
     function validateRoom3() {
       const { q1, q2, q3 } = gameState.r3_q;
       const fb = document.getElementById('feedbackRoom3');
@@ -2011,7 +2041,7 @@
         return;
       }
 
-      if (q1 === 'A' && q2 === 'B' && q3 === 'A') {
+      if (q1 === 'A' && q2 === 'B' && q3 === 'B') {
         sound.playSuccess();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-emerald-400";
         fb.innerText = "¡PARÁMETROS CANNÁBICOS VALIDADOS CON ÉXITO!";
@@ -2024,13 +2054,13 @@
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
         let hints = [];
         if (q1 !== 'A') hints.push('Pregunta 1 (11-OH-THC hepático)');
-        if (q2 !== 'B') hints.push('Pregunta 2 (CBD en Charlotte Figi)');
-        if (q3 !== 'A') hints.push('Pregunta 3 (ausencia de CB1 en tronco)');
-        fb.innerText = `Revisa: ${hints.join(', ')}`;
+        if (q2 !== 'B') hints.push('Pregunta 2 (fitocannabinoide de Charlotte Figi)');
+        if (q3 !== 'B') hints.push('Pregunta 3 (distribución de receptores CB1)');
+        fb.innerText = `Revisa en el Dossier: ${hints.join(', ')}`;
       }
     }
 
-    // Validación Sala 5 (Respuestas: q1=A, q2=A, q3=A)
+    // Validación Sala 5 (Respuestas: q1=A, q2=B, q3=C)
     function administerProtocol() {
       const { q1, q2, q3 } = gameState.r5_q;
       const fb = document.getElementById('feedbackRoom5');
@@ -2042,7 +2072,7 @@
         return;
       }
 
-      if (q1 === 'A' && q2 === 'A' && q3 === 'A') {
+      if (q1 === 'A' && q2 === 'B' && q3 === 'C') {
         gameState.completed = true;
         gameState.completedAt = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
         markRoomCompleted(5);
@@ -2082,10 +2112,10 @@
         sound.playError();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
         let hints = [];
-        if (q1 !== 'A') hints.push('Decisión 1 (Benzodiacepinas)');
-        if (q2 !== 'A') hints.push('Decisión 2 (Posición Lateral)');
-        if (q3 !== 'A') hints.push('Decisión 3 (Reposición K+ y Mg2+)');
-        fb.innerText = `Revisa: ${hints.join(', ')}`;
+        if (q1 !== 'A') hints.push('Decisión 1 (manejo de crisis simpaticomimética)');
+        if (q2 !== 'B') hints.push('Decisión 2 (protección de vía aérea en estupor)');
+        if (q3 !== 'C') hints.push('Decisión 3 (estabilización iónica miocárdica)');
+        fb.innerText = `Revisa en el Dossier: ${hints.join(', ')}`;
       }
     }
 
@@ -2112,14 +2142,14 @@
       } else if (tab === 'guarana') {
         bGuarana.className = "p-2 rounded-lg bg-purple-950 border border-purple-500 text-purple-300 text-center font-bold";
         area.innerHTML = `
-          <p><strong>Ingredientes en letra pequeña:</strong> <span class="text-purple-400 font-bold">Extracto de guaraná (3-4x más cafeína que el café)</span> + <span class="text-amber-400 font-bold">Taurina (1,000 mg)</span>.</p>
-          <p class="text-[11px] text-slate-400">Peligro: Los taninos del guaraná retardan la absorción estomacal prolongando el estímulo 10 horas. La taurina abre el calcio miocárdico forzando contracciones cardíacas violentas.</p>
+          <p><strong>Ingredientes en letra pequeña:</strong> <span class="text-purple-400 font-bold">Extracto de Paullinia cupana (Guaraná)</span> + <span class="text-amber-400 font-bold">Taurina (1,000 mg)</span>.</p>
+          <p class="text-[11px] text-slate-400">Peligro: Los taninos del guaraná retardan la absorción estomacal prolongando el estímulo 10 horas. Consulta en el Dossier la potencia multiplicadora de sus semillas para deducir el D3.</p>
         `;
       } else if (tab === 'coca') {
         bCoca.className = "p-2 rounded-lg bg-amber-950 border border-amber-500 text-amber-300 text-center font-bold";
         area.innerHTML = `
-          <p><strong>Cálculo de Equivalencias:</strong> 1 lata de Monster (160 mg) / 1 lata de Coca-Cola (34 mg) ≈ <span class="text-amber-400 font-bold font-mono">4.7 latas de Coca-Cola</span>.</p>
-          <p class="text-[11px] text-slate-400">Con 3 latas seguidas, Mateo ingirió el equivalente a casi 15 Coca-Colas o 5 cafés juntos, rebasando el umbral de intoxicación aguda.</p>
+          <p><strong>Ficha Comparativa de Laboratorio:</strong> 1 lata de Monster contiene <span class="text-cyan-400 font-mono font-bold">160 mg</span> de cafeína sintética.</p>
+          <p class="text-[11px] text-slate-400">Consulta en el Dossier los mg de cafeína en un refresco de cola tradicional (355 ml) y calcula la equivalencia matemática para hallar el D1.</p>
         `;
       }
     }
