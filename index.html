@@ -2,7 +2,7 @@
 <html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#050814">
   <meta name="description" content="Escape Room Toxicológico Forense - Caso Clínico #CZ-892: El Enigma de Praga. Actividad interactiva basada en toxicología médica.">
   <title>Escape Room Toxicológico: El Enigma de Praga</title>
@@ -61,12 +61,13 @@
       color: #e2e8f0;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
+      min-height: 100dvh;
       overflow-x: hidden;
     }
 
-    /* Scanline retrofuturista suave */
+    /* Scanline suave */
     .scanlines {
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.02));
       background-size: 100% 3px, 6px 100%;
       pointer-events: none;
     }
@@ -81,22 +82,27 @@
     .glass-card-bright {
       background: rgba(17, 30, 62, 0.92);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(56, 189, 248, 0.25);
     }
 
-    /* Pestañas de fases activas */
+    /* Pestañas de fases */
     .phase-pill.active {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(139, 92, 246, 0.25));
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(139, 92, 246, 0.25)) !important;
       border-color: #38bdf8 !important;
       color: #38bdf8 !important;
-      box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+      box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
     }
     .phase-pill.completed {
-      border-color: rgba(16, 185, 129, 0.5) !important;
+      border-color: rgba(16, 185, 129, 0.6) !important;
+      background: rgba(6, 78, 59, 0.2) !important;
       color: #34d399 !important;
     }
 
-    /* Botón interactivo táctil */
+    /* Ergonomía táctil para móviles */
+    button, .touch-btn, .num-key, a {
+      touch-action: manipulation;
+    }
     .touch-btn {
       transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -122,16 +128,7 @@
       filter: brightness(1.3);
     }
 
-    /* Animaciones suaves */
-    @keyframes pulse-subtle {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.85; transform: scale(1.02); }
-    }
-    .pulse-glow {
-      animation: pulse-subtle 2.5s infinite ease-in-out;
-    }
-
-    /* Opciones interactivas */
+    /* Opciones interactivas de cuestionarios */
     .quiz-option {
       transition: all 0.2s ease;
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -146,15 +143,26 @@
       box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
     }
 
-    /* Custom range slider */
+    /* Custom range slider para WebKit y Firefox */
     input[type=range] {
       -webkit-appearance: none;
+      appearance: none;
       background: #1e293b;
       border-radius: 9999px;
       height: 8px;
+      cursor: pointer;
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
+      height: 22px;
+      width: 22px;
+      border-radius: 50%;
+      background: #06b6d4;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+      border: 2px solid #ffffff;
+    }
+    input[type=range]::-moz-range-thumb {
       height: 22px;
       width: 22px;
       border-radius: 50%;
@@ -183,42 +191,64 @@
 </head>
 <body class="relative selection:bg-cyan-500 selection:text-white pb-12">
 
-  <!-- Scanlines visual layer -->
+  <!-- Capa de scanlines -->
   <div class="fixed inset-0 scanlines z-40 pointer-events-none opacity-25"></div>
 
   <!-- ========================================================================= -->
-  <!-- BARRA DE NAVEGACIÓN SUPERIOR ERGONÓMICA Y RESPONSIVA (STICKY HEADER)       -->
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR ERGONÓMICA Y RESPONSIVA (MOBILE OPTIMIZED)    -->
   <!-- ========================================================================= -->
-  <header class="sticky top-0 z-30 glass-card-bright border-b border-slate-800/80 px-3 md:px-6 py-2.5 shadow-xl shadow-black/40">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 md:gap-4">
+  <header class="sticky top-0 z-30 glass-card-bright border-b border-slate-800/80 px-2.5 sm:px-4 md:px-6 py-2 shadow-xl shadow-black/40">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-1.5 md:gap-4">
       
-      <!-- Logo y Título -->
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-gradient-to-tr from-cyan-500 via-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/25 shrink-0">
-          <i class="fa-solid fa-microscope text-sm md:text-lg animate-pulse"></i>
-        </div>
-        <div class="min-w-0">
-          <div class="flex items-center gap-1.5">
-            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <h1 class="font-display text-xs md:text-sm lg:text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-100 to-indigo-300 truncate tracking-wide">
-              CASO #CZ-892: PRAGA
-            </h1>
+      <!-- Fila superior en móvil / Izquierda en desktop -->
+      <div class="flex items-center justify-between gap-2">
+        <!-- Logo y Título -->
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-sky-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/25 shrink-0">
+            <i class="fa-solid fa-microscope text-xs md:text-base animate-pulse"></i>
           </div>
-          <p class="text-[10px] md:text-xs text-slate-400 font-tech uppercase tracking-wider truncate">
-            Toxicolab • Univ. Carolina
-          </p>
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              <h1 class="font-display text-xs md:text-sm lg:text-base font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-sky-100 to-indigo-300 truncate tracking-wide">
+                CASO #CZ-892: PRAGA
+              </h1>
+            </div>
+            <p class="text-[9px] md:text-xs text-slate-400 font-tech uppercase tracking-wider truncate">
+              Toxicolab • Univ. Carolina
+            </p>
+          </div>
+        </div>
+
+        <!-- Botones Rápidos (Dossier, Audio, Reinicio) -->
+        <div class="flex items-center gap-1 shrink-0">
+          <!-- Botón Dossier interactivo -->
+          <button onclick="toggleDossierModal()" class="touch-btn h-8 px-2 md:px-3 rounded-lg md:rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white flex items-center gap-1 text-[11px] md:text-xs font-bold shadow-md shadow-amber-600/20 border border-amber-500/50" title="Abrir Dossier de Estudio">
+            <i class="fa-solid fa-book-medical text-amber-200"></i>
+            <span class="font-tech tracking-wider uppercase text-[10px] md:text-xs">DOSSIER</span>
+          </button>
+
+          <!-- Botón Silenciar / Sonido Web Audio -->
+          <button id="soundBtn" onclick="toggleSound()" class="touch-btn w-8 h-8 rounded-lg md:rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-400 flex items-center justify-center border border-slate-700/80 shadow" title="Activar/Silenciar sonido">
+            <i id="soundIcon" class="fa-solid fa-volume-xmark text-xs"></i>
+          </button>
+
+          <!-- Menú de opciones / Reinicio -->
+          <button onclick="confirmRestartGame()" class="touch-btn w-8 h-8 rounded-lg md:rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 flex items-center justify-center border border-slate-700/80 shadow" title="Reiniciar investigación">
+            <i class="fa-solid fa-rotate-left text-xs"></i>
+          </button>
         </div>
       </div>
 
       <!-- Monitor Vital de Mateo con Canvas ECG dinámico -->
-      <div class="flex items-center gap-1.5 md:gap-3 bg-slate-950/90 px-2.5 md:px-3 py-1.5 rounded-xl border border-slate-800 shadow-inner">
+      <div class="flex items-center justify-around sm:justify-center gap-2 sm:gap-3 bg-slate-950/90 px-2 sm:px-3 py-1 rounded-xl border border-slate-800/90 shadow-inner">
         <!-- Canvas ECG -->
-        <div class="relative w-12 sm:w-20 md:w-24 h-6 hidden min-[380px]:block">
+        <div class="relative w-14 sm:w-20 md:w-24 h-5 sm:h-6 shrink-0">
           <canvas id="ecgCanvas" width="96" height="24" class="w-full h-full"></canvas>
         </div>
 
         <!-- BPM -->
-        <div class="flex items-center gap-1 text-rose-400 font-mono text-[11px] md:text-xs font-bold">
+        <div class="flex items-center gap-1 text-rose-400 font-mono text-[11px] sm:text-xs font-bold">
           <i class="fa-solid fa-heart-pulse animate-bounce text-rose-500"></i>
           <span><span id="headerBpm">148</span><span class="text-[9px] text-slate-400 font-normal">BPM</span></span>
         </div>
@@ -226,37 +256,18 @@
         <div class="h-3 w-px bg-slate-800"></div>
 
         <!-- Temp -->
-        <div class="flex items-center gap-1 text-amber-400 font-mono text-[11px] md:text-xs font-bold">
+        <div class="flex items-center gap-1 text-amber-400 font-mono text-[11px] sm:text-xs font-bold">
           <i class="fa-solid fa-temperature-half text-amber-500"></i>
           <span><span id="headerTemp">39.8</span><span class="text-[9px] text-slate-400 font-normal">°C</span></span>
         </div>
 
-        <div class="h-3 w-px bg-slate-800 hidden sm:block"></div>
+        <div class="h-3 w-px bg-slate-800"></div>
 
         <!-- Cronómetro -->
-        <div class="flex items-center gap-1 text-cyan-300 font-mono text-[11px] md:text-xs font-bold bg-cyan-950/60 px-2 py-0.5 rounded-lg border border-cyan-800/50">
+        <div class="flex items-center gap-1 text-cyan-300 font-mono text-[11px] sm:text-xs font-bold bg-cyan-950/60 px-2 py-0.5 rounded-lg border border-cyan-800/50">
           <i class="fa-solid fa-stopwatch text-cyan-400"></i>
           <span id="headerTimer">35:00</span>
         </div>
-      </div>
-
-      <!-- Botones Rápidos (Dossier, Audio, Ayuda) -->
-      <div class="flex items-center gap-1.5 shrink-0">
-        <!-- Botón Biblioteca Forense (Dossier interactivo) -->
-        <button onclick="toggleDossierModal()" class="touch-btn h-9 px-2.5 md:px-3.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white flex items-center gap-1.5 text-xs font-bold shadow-lg shadow-amber-600/25 border border-amber-500/50" title="Abrir Dossier de Estudio (Lectura)">
-          <i class="fa-solid fa-book-medical text-amber-200"></i>
-          <span class="hidden md:inline font-tech tracking-wider uppercase">Dossier</span>
-        </button>
-
-        <!-- Botón Silenciar / Sonido Web Audio -->
-        <button id="soundBtn" onclick="toggleSound()" class="touch-btn w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-400 flex items-center justify-center border border-slate-700/80 shadow" title="Activar/Desactivar efectos sonoros">
-          <i id="soundIcon" class="fa-solid fa-volume-xmark text-xs"></i>
-        </button>
-
-        <!-- Menú de opciones / Reinicio -->
-        <button onclick="confirmRestartGame()" class="touch-btn w-9 h-9 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 flex items-center justify-center border border-slate-700/80 shadow" title="Reiniciar investigación">
-          <i class="fa-solid fa-rotate-left text-xs"></i>
-        </button>
       </div>
 
     </div>
@@ -266,7 +277,7 @@
   <!-- BARRA HORIZONTAL DE FASES (SCROLLABLE TIMELINE COMPACTO)                   -->
   <!-- ========================================================================= -->
   <nav class="max-w-7xl mx-auto px-3 md:px-6 pt-3 pb-1">
-    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+    <div id="phaseTabsContainer" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
       <!-- Fase 1 -->
       <button onclick="switchRoom(1)" id="tabPhase1" class="phase-pill active touch-btn flex-shrink-0 px-3 py-2 rounded-xl border border-slate-800 bg-slate-900/80 text-left transition flex items-center gap-2">
         <div class="w-6 h-6 rounded-lg bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-[10px] font-mono font-bold text-cyan-300">
@@ -277,7 +288,7 @@
             <span>FASE 1</span>
             <span id="tabStatus1" class="text-cyan-400"><i class="fa-solid fa-lock-open"></i></span>
           </div>
-          <div class="text-xs font-semibold text-slate-200">Bebidas Energéticas</div>
+          <div class="text-xs font-semibold text-slate-200">Bebidas Estimulantes</div>
         </div>
       </button>
 
@@ -345,7 +356,7 @@
   <main class="max-w-7xl mx-auto px-3 md:px-6 py-3">
 
     <!-- PANTALLA INTRODUCTORIA (EXPEDIENTE FORENSE) -->
-    <section id="introScreen" class="glass-card rounded-2xl p-5 md:p-8 border border-cyan-900/60 shadow-2xl relative overflow-hidden mb-6">
+    <section id="introScreen" class="glass-card rounded-2xl p-4 md:p-8 border border-cyan-900/60 shadow-2xl relative overflow-hidden mb-6">
       <div class="absolute -right-24 -bottom-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div class="flex flex-col lg:flex-row items-center gap-6">
@@ -362,7 +373,7 @@
             <strong>Mateo Ramos (19 años, 64 kg)</strong>, estudiante universitario de intercambio en Praga, fue hallado inconsciente sobre su escritorio con taquicardia severa (<strong>148 BPM</strong>), temblor de extremidades, diaforesis (sudoración fría), fiebre maligna de <strong>39.8°C</strong> y midriasis reactiva.
           </p>
 
-          <div class="p-4 rounded-xl bg-slate-950/90 border border-slate-800 text-xs md:text-sm text-slate-300 space-y-2.5">
+          <div class="p-3.5 md:p-4 rounded-xl bg-slate-950/90 border border-slate-800 text-xs md:text-sm text-slate-300 space-y-2.5">
             <div class="font-bold text-cyan-300 flex items-center gap-2">
               <i class="fa-solid fa-user-doctor text-cyan-400"></i> Protocolo para los Equipos Forenses:
             </div>
@@ -370,15 +381,23 @@
               En la habitación y en la ropa de Mateo se incautaron latas de bebidas energéticas, paquetes sospechosos de plantas y polvos, comestibles de repostería y vasos de la fiesta.
             </p>
             <p class="text-amber-200">
-              💡 <strong>Herramienta Clave:</strong> No necesitas adivinar. Pulsa el botón dorado <strong class="text-white bg-amber-700/60 px-1.5 py-0.5 rounded"><i class="fa-solid fa-book-medical mr-1"></i>DOSSIER</strong> en la barra superior en cualquier momento para consultar los documentos oficiales del caso (mecanismos, fórmulas, dosis tóxicas y datos de las 16 preguntas Kahoot).
+              💡 <strong>Herramienta Clave:</strong> No necesitas adivinar. Pulsa el botón dorado <strong class="text-white bg-amber-700/60 px-1.5 py-0.5 rounded"><i class="fa-solid fa-book-medical mr-1"></i>DOSSIER</strong> en la barra superior en cualquier momento para consultar los documentos oficiales del caso (mecanismos moleculares, fórmulas, dosis tóxicas y datos de las 16 preguntas Kahoot).
             </p>
           </div>
 
+          <!-- Identificación del Alumno o Equipo para el Certificado -->
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-cyan-900/50 space-y-1.5">
+            <label for="studentNameInput" class="text-xs font-tech font-bold text-cyan-300 block flex items-center gap-1.5">
+              <i class="fa-solid fa-id-card"></i> NOMBRE DEL ALUMNO O EQUIPO (PARA CERTIFICADO):
+            </label>
+            <input type="text" id="studentNameInput" placeholder="Ej. Dr. Carlos Soto / Equipo 4 Toxi" class="w-full max-w-sm px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 text-white text-xs md:text-sm font-tech tracking-wide transition placeholder:text-slate-500">
+          </div>
+
           <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button onclick="startGame()" class="touch-btn px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-bold text-xs md:text-sm tracking-wider shadow-lg shadow-cyan-500/30 flex items-center gap-2">
+            <button onclick="startGame()" class="touch-btn w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-display font-bold text-xs md:text-sm tracking-wider shadow-lg shadow-cyan-500/30 flex items-center justify-center gap-2">
               <i class="fa-solid fa-play"></i> INICIAR INVESTIGACIÓN FORENSE
             </button>
-            <button onclick="toggleDossierModal()" class="touch-btn px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 font-tech font-bold text-xs tracking-wider border border-amber-600/50 flex items-center gap-2">
+            <button onclick="toggleDossierModal()" class="touch-btn w-full sm:w-auto px-4 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 font-tech font-bold text-xs tracking-wider border border-amber-600/50 flex items-center justify-center gap-2">
               <i class="fa-solid fa-book-open"></i> ABRIR DOSSIER DE ESTUDIO
             </button>
           </div>
@@ -415,7 +434,7 @@
     <!-- ========================================================================= -->
     <!-- SALA 1: EL ESCRITORIO CAÓTICO (Bebidas Estimulantes)                      -->
     <!-- ========================================================================= -->
-    <section id="room1" class="room-view glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
+    <section id="room1" class="room-view hidden glass-card rounded-2xl p-4 md:p-6 lg:p-8 border border-slate-800 shadow-2xl">
       <!-- Encabezado de la fase -->
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4 mb-5">
         <div>
@@ -759,8 +778,8 @@
               </div>
               <input type="range" id="edibleSlider" min="10" max="150" value="60" oninput="updateEdibleSim(this.value)" class="w-full">
               <div class="flex justify-between text-[10px] text-slate-500 font-mono">
-                <span>10 min (Inerte en estómago)</span>
-                <span>60 min (Pico en hígado)</span>
+                <span>10 min (Estómago)</span>
+                <span>60 min (Pico hepático)</span>
                 <span>120 min (Explosión masiva)</span>
               </div>
             </div>
@@ -1099,8 +1118,8 @@
     <!-- ========================================================================= -->
     <!-- PANTALLA DE VICTORIA Y CERTIFICADO TOXICOLÓGICO                           -->
     <!-- ========================================================================= -->
-    <section id="victoryScreen" class="hidden glass-card rounded-2xl p-6 md:p-10 border border-emerald-500/60 shadow-2xl text-center relative overflow-hidden">
-      <div class="w-24 h-24 mx-auto rounded-3xl bg-emerald-950/80 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-4xl mb-4 shadow-lg shadow-emerald-500/25 animate-bounce">
+    <section id="victoryScreen" class="hidden glass-card rounded-2xl p-5 md:p-10 border border-emerald-500/60 shadow-2xl text-center relative overflow-hidden">
+      <div class="w-20 h-20 md:w-24 md:h-24 mx-auto rounded-3xl bg-emerald-950/80 border-2 border-emerald-400 flex items-center justify-center text-emerald-400 text-3xl md:text-4xl mb-3 shadow-lg shadow-emerald-500/25 animate-bounce">
         <i class="fa-solid fa-trophy"></i>
       </div>
 
@@ -1108,37 +1127,44 @@
         MISIÓN MÉDICA CUMPLIDA • PACIENTE ESTABILIZADO
       </div>
 
-      <h2 class="text-2xl md:text-4xl font-display font-black text-white mb-3">
+      <h2 class="text-xl md:text-3xl lg:text-4xl font-display font-black text-white mb-2">
         ¡HAS RESUELTO EL ENIGMA TOXICOLÓGICO DE PRAGA!
       </h2>
 
-      <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto mb-6 leading-relaxed">
-        Gracias a tu dominio de la farmacocinética y toxicología médica, neutralizaste el cuadro polimaterial de Mateo. Su ritmo cardíaco bajó a <strong class="text-emerald-400">76 BPM</strong>, su temperatura se normalizó a <strong class="text-emerald-400">36.6°C</strong> y su vía aérea está 100% segura.
+      <!-- Tarjeta Oficial de Certificación -->
+      <div class="p-4 rounded-xl bg-cyan-950/40 border border-cyan-800/80 mb-5 max-w-xl mx-auto text-center space-y-1">
+        <span class="text-[10px] text-cyan-400 font-tech font-bold uppercase tracking-widest block">CERTIFICADO OFICIAL TOXICOLAB</span>
+        <h3 id="certStudentName" class="font-display font-black text-white text-lg md:text-xl">ESTUDIANTE FORENSE</h3>
+        <p id="certDate" class="text-[11px] text-slate-400 font-mono">Fecha de Emisión: --/--/----</p>
+      </div>
+
+      <p class="text-slate-300 text-xs md:text-sm max-w-2xl mx-auto mb-6 leading-relaxed">
+        Gracias a tu dominio de la farmacocinética y toxicología médica, neutralizaste el cuadro polimaterial de Mateo. Su ritmo cardíaco bajó a <strong class="text-emerald-400">76 BPM</strong>, su temperatura se normalizó a <strong class="text-emerald-400">36.6°C</strong> y su vía aérea está 100% protegida.
       </p>
 
       <!-- Ficha de resultados y métricas -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-xl mx-auto mb-8 text-left">
-        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-          <span class="text-xs text-slate-400 block font-tech uppercase">TIEMPO EMPLEADO</span>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto mb-6 text-left">
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+          <span class="text-[11px] text-slate-400 block font-tech uppercase">TIEMPO EMPLEADO</span>
           <span id="finalTimeScore" class="text-lg font-mono font-bold text-cyan-400">--:--</span>
         </div>
-        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-          <span class="text-xs text-slate-400 block font-tech uppercase">FASES SUPERADAS</span>
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+          <span class="text-[11px] text-slate-400 block font-tech uppercase">FASES SUPERADAS</span>
           <span class="text-lg font-mono font-bold text-emerald-400">5 / 5 (100%)</span>
         </div>
-        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
-          <span class="text-xs text-slate-400 block font-tech uppercase">RANGO OBTENIDO</span>
+        <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+          <span class="text-[11px] text-slate-400 block font-tech uppercase">RANGO OBTENIDO</span>
           <span class="text-lg font-mono font-bold text-amber-400">ESPECIALISTA FORENSE</span>
         </div>
       </div>
 
       <!-- Acciones de victoria -->
       <div class="flex flex-wrap justify-center gap-3">
-        <button onclick="confirmRestartGame()" class="touch-btn px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs tracking-wider border border-slate-700 transition flex items-center gap-2">
-          <i class="fa-solid fa-rotate-left"></i> REINICIAR CASO
+        <button onclick="shareVictoryCertificate()" class="touch-btn px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-tech font-bold text-xs tracking-wider shadow-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-share-nodes"></i> COMPARTIR RESULTADO
         </button>
-        <button onclick="window.print()" class="touch-btn px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-tech font-bold text-xs tracking-wider shadow-lg transition flex items-center gap-2">
-          <i class="fa-solid fa-print"></i> IMPRIMIR CERTIFICADO
+        <button onclick="confirmRestartGame()" class="touch-btn px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs tracking-wider border border-slate-700 transition flex items-center gap-2">
+          <i class="fa-solid fa-rotate-left"></i> REINICIAR CASO
         </button>
       </div>
     </section>
@@ -1148,25 +1174,25 @@
   <!-- ========================================================================= -->
   <!-- MODAL / DRAWER INTERACTIVO DEL DOSSIER (BIBLIOTECA COMPLETA)              -->
   <!-- ========================================================================= -->
-  <div id="dossierModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md">
-    <div class="glass-card w-full max-w-3xl rounded-2xl border border-amber-600/70 shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+  <div id="dossierModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md">
+    <div class="glass-card w-full max-w-3xl rounded-2xl border border-amber-600/70 shadow-2xl flex flex-col max-h-[88vh] max-h-[88dvh] overflow-hidden">
       
       <!-- Encabezado del Dossier -->
-      <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950/80 shrink-0">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-amber-950 border border-amber-500/50 flex items-center justify-center text-amber-400 text-sm">
+      <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 bg-slate-950/80 shrink-0">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-lg bg-amber-950 border border-amber-500/50 flex items-center justify-center text-amber-400 text-sm shrink-0">
             <i class="fa-solid fa-book-medical"></i>
           </div>
-          <div>
-            <h3 class="font-display font-bold text-sm md:text-base text-amber-300">
+          <div class="min-w-0">
+            <h3 class="font-display font-bold text-xs sm:text-base text-amber-300 truncate">
               DOSSIER MÉDICO Y TOXICOLÓGICO FORENSE
             </h3>
-            <p class="text-[10px] text-slate-400 font-tech uppercase tracking-wider">
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-tech uppercase tracking-wider truncate">
               Documentos de Consulta Oficial • Caso Clínico #CZ-892
             </p>
           </div>
         </div>
-        <button onclick="toggleDossierModal()" class="w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-base">
+        <button onclick="toggleDossierModal()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-lg shrink-0 ml-2">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -1174,7 +1200,7 @@
       <!-- Barra de pestañas del Dossier -->
       <div class="flex items-center gap-1.5 p-2 bg-slate-900 border-b border-slate-800 overflow-x-auto scrollbar-thin shrink-0 text-xs">
         <button onclick="openDossierTab('bebidas')" id="dossierTab_bebidas" class="touch-btn px-3 py-1.5 rounded-lg bg-amber-600 text-white font-bold whitespace-nowrap">
-          ⚡ Bebidas Energéticas
+          ⚡ Bebidas Estimulantes
         </button>
         <button onclick="openDossierTab('coca')" id="dossierTab_coca" class="touch-btn px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 whitespace-nowrap">
           🌿 Coca vs Cocaína
@@ -1248,7 +1274,7 @@
 
           <div class="space-y-2">
             <h5 class="font-bold text-amber-300">3. Cardiotoxicidad y Paro Cardíaco:</h5>
-            <p>La cocaína actúa como veneno miocárdico directo: <strong>bloquea los canales de sodio (Nav)</strong> de las células cardíacas (efecto anestésico) y produce un <strong>vasoespasmo coronario severo</strong> que estrangula el flujo de sangre, desencadenando arritmias malignas o infartos agudos en jóvenes de 17-20 años sanos.</p>
+            <p>La cocaína actúa como veneno miocárdico directo: <strong>bloquea los canales de sodio (Nav)</strong> de las células cardíacas (efecto anestésico) y produce un <strong>vasoespasmo coronario severo</strong> que estrangula el flujo de sangre, desencadenando arritmias malignas o infartos agudos en jóvenes sanos.</p>
             <p>LD50 estimada en humanos: 1,000 a 1,400 mg (1 a 1.4 g). En personas susceptibles o con vasoespasmo súbito se han documentado muertes con apenas 20 a 50 mg.</p>
           </div>
         </div>
@@ -1375,7 +1401,7 @@
 
       <!-- Pie del modal -->
       <div class="p-3 bg-slate-950 border-t border-slate-800 text-right shrink-0">
-        <button onclick="toggleDossierModal()" class="touch-btn px-5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs">
+        <button onclick="toggleDossierModal()" class="touch-btn w-full sm:w-auto px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs">
           Cerrar Dossier y Continuar
         </button>
       </div>
@@ -1384,9 +1410,9 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- SISTEMA DE TOASTS FLOTANTES NO BLOQUEANTES                                -->
+  <!-- SISTEMA DE TOASTS FLOTANTES NO BLOQUEANTES (CENTERED ON MOBILE)           -->
   <!-- ========================================================================= -->
-  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full px-3"></div>
+  <div id="toastContainer" class="fixed bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-[92vw] sm:w-full px-2"></div>
 
   <!-- MODAL DE CONFIRMACIÓN DE REINICIO -->
   <div id="confirmRestartModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
@@ -1409,12 +1435,36 @@
     </div>
   </div>
 
+  <!-- MODAL DE CRISIS CLÍNICA / PARO CARDÍACO POR TIEMPO AGOTADO -->
+  <div id="gameOverModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+    <div class="glass-card w-full max-w-sm rounded-2xl p-6 border border-rose-600/70 shadow-2xl text-center space-y-4">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-rose-950 border-2 border-rose-500/80 flex items-center justify-center text-rose-400 text-3xl shadow-lg shadow-rose-950 animate-pulse">
+        <i class="fa-solid fa-heart-crack"></i>
+      </div>
+      <div class="inline-block px-3 py-0.5 rounded-full bg-rose-950/80 border border-rose-600 text-rose-300 text-[10px] font-tech font-bold uppercase tracking-widest">
+        CRISIS CLÍNICA • ASISTOLIA
+      </div>
+      <h3 class="font-display font-black text-white text-lg">¡TIEMPO AGOTADO!</h3>
+      <p class="text-xs text-slate-300 leading-relaxed">
+        El corazón de Mateo entró en colapso por la sobredosis múltiple. Puedes aplicar una descarga de emergencia del desfibrilador para obtener +10 minutos de soporte vital o reiniciar la investigación.
+      </p>
+      <div class="space-y-2 pt-2">
+        <button onclick="emergencyDefibrillate()" class="touch-btn w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 via-sky-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-tech font-bold text-xs tracking-wider shadow-lg shadow-cyan-950 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-bolt text-amber-300"></i> DESCARGA DE RCP (+10 MINUTOS)
+        </button>
+        <button onclick="executeRestartGame()" class="touch-btn w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 border border-slate-800 text-xs font-semibold">
+          Reiniciar desde el inicio
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ========================================================================= -->
   <!-- LÓGICA DE JUEGO, SONIDO Y SINCRONIZACIÓN LOCALSTORAGE                     -->
   <!-- ========================================================================= -->
   <script>
     // -------------------------------------------------------------
-    // MOTOR DE SONIDO NATIVO WEB AUDIO API (CERO DEPENDENCIAS, CERO CRASHES)
+    // MOTOR DE SONIDO NATIVO WEB AUDIO API
     // -------------------------------------------------------------
     class WebAudioEngine {
       constructor() {
@@ -1434,7 +1484,6 @@
         }
       }
 
-      // Haptic tactile vibration
       vibrate(ms = 15) {
         if (navigator.vibrate) {
           try { navigator.vibrate(ms); } catch (e) {}
@@ -1526,19 +1575,22 @@
     // -------------------------------------------------------------
     // ESTADO GLOBAL Y PERSISTENCIA LOCALSTORAGE
     // -------------------------------------------------------------
-    const STORAGE_KEY = 'escaperoom_toxi_state_v2';
+    const STORAGE_KEY = 'escaperoom_toxi_state_v3';
 
     const defaultState = {
       started: false,
+      studentName: '',
       currentRoom: 1,
       unlockedRooms: [1],
+      completedRooms: [],
       pin1: '',
       pin4: '',
       r2_q: { q1: null, q2: null, q3: null },
       r3_q: { q1: null, q2: null, q3: null },
       r5_q: { q1: null, q2: null, q3: null },
       remainingSeconds: 35 * 60,
-      completed: false
+      completed: false,
+      completedAt: null
     };
 
     let gameState = { ...defaultState };
@@ -1548,7 +1600,15 @@
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved);
-          gameState = { ...defaultState, ...parsed };
+          gameState = {
+            ...defaultState,
+            ...parsed,
+            unlockedRooms: Array.isArray(parsed.unlockedRooms) ? parsed.unlockedRooms : [1],
+            completedRooms: Array.isArray(parsed.completedRooms) ? parsed.completedRooms : [],
+            r2_q: { ...defaultState.r2_q, ...(parsed.r2_q || {}) },
+            r3_q: { ...defaultState.r3_q, ...(parsed.r3_q || {}) },
+            r5_q: { ...defaultState.r5_q, ...(parsed.r5_q || {}) }
+          };
         }
       } catch (e) {}
     }
@@ -1560,13 +1620,48 @@
     }
 
     // -------------------------------------------------------------
+    // ACTUALIZACIÓN VISUAL DE LAS PESTAÑAS DE FASES
+    // -------------------------------------------------------------
+    function updatePhaseTabsUI() {
+      for (let i = 1; i <= 5; i++) {
+        const tab = document.getElementById(`tabPhase${i}`);
+        const status = document.getElementById(`tabStatus${i}`);
+        if (!tab || !status) continue;
+
+        const isUnlocked = gameState.unlockedRooms.includes(i);
+        const isCompleted = gameState.completedRooms && gameState.completedRooms.includes(i);
+        const isActive = gameState.currentRoom === i;
+
+        // Limpiar clases previas
+        tab.classList.remove('active', 'completed', 'opacity-60');
+
+        if (isActive) {
+          tab.classList.add('active');
+        }
+
+        if (isCompleted) {
+          tab.classList.add('completed');
+          status.className = "text-emerald-400";
+          status.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+        } else if (isUnlocked) {
+          status.className = "text-cyan-400";
+          status.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+        } else {
+          tab.classList.add('opacity-60');
+          status.className = "text-slate-500";
+          status.innerHTML = '<i class="fa-solid fa-lock"></i>';
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
     // ANIMACIÓN DEL CANVAS ECG (ELECTROCARDIOGRAMA)
     // -------------------------------------------------------------
     const ecgCanvas = document.getElementById('ecgCanvas');
     const ecgCtx = ecgCanvas ? ecgCanvas.getContext('2d') : null;
     let ecgX = 0;
-    let ecgPoints = [];
     let lastBeatTime = 0;
+    let beatTriggeredThisCycle = false;
 
     function renderEcg() {
       if (!ecgCtx) return;
@@ -1586,14 +1681,21 @@
       let targetY = midY;
       const timeSinceBeat = (now - lastBeatTime) % beatInterval;
 
+      // Resetear trigger de audio en la fase previa
+      if (timeSinceBeat < 60) {
+        beatTriggeredThisCycle = false;
+      }
+
       if (timeSinceBeat < 40) {
         targetY = midY + 3; // Onda P
       } else if (timeSinceBeat >= 80 && timeSinceBeat < 110) {
         targetY = midY - 2; // Q
       } else if (timeSinceBeat >= 110 && timeSinceBeat < 150) {
         targetY = midY - 10; // R picuda
-        if (timeSinceBeat < 125 && Math.random() < 0.25) {
-          sound.playHeartbeat();
+        // Bip sincrónico exactamente en el pico R
+        if (!beatTriggeredThisCycle) {
+          beatTriggeredThisCycle = true;
+          sound.playHeartbeat(bpm < 100 ? 750 : 880);
         }
       } else if (timeSinceBeat >= 150 && timeSinceBeat < 180) {
         targetY = midY + 6; // S
@@ -1632,9 +1734,25 @@
           if (gameState.remainingSeconds % 5 === 0) saveState();
         } else {
           clearInterval(timerInterval);
-          showToast("TIEMPO AGOTADO", "El ritmo cardíaco de Mateo colapsó. Debes reiniciar la reanimación.", "error");
+          handleTimeExpired();
         }
       }, 1000);
+    }
+
+    function handleTimeExpired() {
+      sound.playError();
+      document.getElementById('gameOverModal').classList.remove('hidden');
+    }
+
+    function emergencyDefibrillate() {
+      sound.init();
+      gameState.remainingSeconds = 10 * 60; // +10 minutos de soporte vital
+      saveState();
+      document.getElementById('gameOverModal').classList.add('hidden');
+      updateTimerUI();
+      startTimer();
+      sound.playSuccess();
+      showToast("⚡ DESFIBRILADOR APLICADO", "Ritmo cardíaco restaurado (+10:00 min). ¡Concluye la reanimación!", "success");
     }
 
     function updateTimerUI() {
@@ -1678,15 +1796,13 @@
       const activeEl = document.getElementById(`room${roomNum}`);
       if (activeEl) activeEl.classList.remove('hidden');
 
-      // Actualizar pestañas superiores
-      for (let i = 1; i <= 5; i++) {
-        const tab = document.getElementById(`tabPhase${i}`);
-        if (!tab) continue;
-        if (i === roomNum) {
-          tab.classList.add('active');
-        } else {
-          tab.classList.remove('active');
-        }
+      // Actualizar pestañas
+      updatePhaseTabsUI();
+
+      // Auto-scroll del timeline en móviles para que la fase activa no quede oculta
+      const activeTab = document.getElementById(`tabPhase${roomNum}`);
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
 
       sound.playKeyClick();
@@ -1696,15 +1812,17 @@
     function unlockRoom(roomNum) {
       if (!gameState.unlockedRooms.includes(roomNum)) {
         gameState.unlockedRooms.push(roomNum);
-        
-        const tab = document.getElementById(`tabPhase${roomNum}`);
-        const status = document.getElementById(`tabStatus${roomNum}`);
-        if (tab) tab.classList.remove('opacity-60');
-        if (status) {
-          status.className = "text-cyan-400";
-          status.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
-        }
         saveState();
+        updatePhaseTabsUI();
+      }
+    }
+
+    function markRoomCompleted(roomNum) {
+      if (!gameState.completedRooms) gameState.completedRooms = [];
+      if (!gameState.completedRooms.includes(roomNum)) {
+        gameState.completedRooms.push(roomNum);
+        saveState();
+        updatePhaseTabsUI();
       }
     }
 
@@ -1746,6 +1864,13 @@
         const code = gameState.pin1;
         const fb = document.getElementById('pinFeedback1');
         
+        if (code.length < 3) {
+          sound.playError();
+          fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-amber-400";
+          fb.innerText = "DEBES INGRESAR LOS 3 DÍGITOS DEL CANDADO";
+          return;
+        }
+
         // Código Sala 1: 534
         // D1: Monster (160) / Coca-Cola (34) ≈ 4.7 -> 5 latas
         // D2: Dosis de riesgo según dossier (500 a 600 mg) = 3 latas seguidas
@@ -1754,8 +1879,9 @@
           sound.playSuccess();
           fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-emerald-400 animate-pulse";
           fb.innerText = "¡CÓDIGO CORRECTO! CAJÓN DE APUNTES DESBLOQUEADO";
+          markRoomCompleted(1);
           unlockRoom(2);
-          showToast("¡FASE 1 SUPERADA!", "Has identificado la bebida estimulante y sus parámetros. Accediendo a Fase 2 (Coca vs Cocaína)...", "success");
+          showToast("¡FASE 1 SUPERADA!", "Has identificado la cafeína y sus equivalencias. Accediendo a Fase 2 (Coca vs Cocaína)...", "success");
           setTimeout(() => switchRoom(2), 1100);
         } else {
           sound.playError();
@@ -1767,6 +1893,13 @@
         const code = gameState.pin4;
         const fb = document.getElementById('pinFeedback4');
 
+        if (code.length < 3) {
+          sound.playError();
+          fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-amber-400";
+          fb.innerText = "DEBES INGRESAR LOS 3 DÍGITOS [A - B - C]";
+          return;
+        }
+
         // Código Sala 4: 137
         // Dígito A: Tasa fija ADH (10 a 15 g/hora) -> primer dígito = 1
         // Dígito B: Rango de coma profundo y LD50 (3.5 a 4.5 g/L) -> entero inferior = 3
@@ -1775,6 +1908,7 @@
           sound.playSuccess();
           fb.className = "text-xs text-center min-h-[24px] font-tech font-bold text-emerald-400 animate-pulse";
           fb.innerText = "¡CÓDIGO ALCOHOLIMÉTRICO VALIDADO!";
+          markRoomCompleted(4);
           unlockRoom(5);
           showToast("¡FASE 4 SUPERADA!", "Comprendiste la cinética de orden cero del alcohol. Ingresando a Fase 5 (Reanimación UCI)...", "success");
           setTimeout(() => switchRoom(5), 1100);
@@ -1786,6 +1920,22 @@
         }
       }
     }
+
+    // -------------------------------------------------------------
+    // SOPORTE PARA TECLADO FÍSICO (DESKTOP Y TABLETS)
+    // -------------------------------------------------------------
+    window.addEventListener('keydown', (e) => {
+      const activeRoom = gameState.currentRoom;
+      if (activeRoom === 1 || activeRoom === 4) {
+        if (e.key >= '0' && e.key <= '9') {
+          pressKey(activeRoom, e.key);
+        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+          clearPin(activeRoom);
+        } else if (e.key === 'Enter') {
+          submitPin(activeRoom);
+        }
+      }
+    });
 
     // -------------------------------------------------------------
     // SELECCIÓN Y VALIDACIÓN DE OPCIONES (Salas 2, 3 y 5)
@@ -1834,13 +1984,18 @@
         sound.playSuccess();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-emerald-400";
         fb.innerText = "¡DIAGNÓSTICO APROBADO! MECANISMOS CELULARES IDENTIFICADOS";
+        markRoomCompleted(2);
         unlockRoom(3);
         showToast("¡FASE 2 SUPERADA!", "Has identificado el clorhidrato de cocaína, el transportador DAT y los canales de sodio. Accediendo a Fase 3...", "success");
         setTimeout(() => switchRoom(3), 1100);
       } else {
         sound.playError();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
-        fb.innerText = "ERROR EN DIAGNÓSTICO. REVISA EL DOSSIER SOBRE DAT Y VASOESPASMO";
+        let hints = [];
+        if (q1 !== 'A') hints.push('Pregunta 1 (absorción lenta del acullico)');
+        if (q2 !== 'B') hints.push('Pregunta 2 (transportador DAT)');
+        if (q3 !== 'A') hints.push('Pregunta 3 (canales de sodio miocárdicos y vasoespasmo)');
+        fb.innerText = `Revisa: ${hints.join(', ')}`;
       }
     }
 
@@ -1860,13 +2015,18 @@
         sound.playSuccess();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-emerald-400";
         fb.innerText = "¡PARÁMETROS CANNÁBICOS VALIDADOS CON ÉXITO!";
+        markRoomCompleted(3);
         unlockRoom(4);
         showToast("¡FASE 3 SUPERADA!", "Diferenciaste el CBD del 11-OH-THC hepático y la ausencia de CB1 en el tronco encefálico. Ingresando a Fase 4...", "success");
         setTimeout(() => switchRoom(4), 1100);
       } else {
         sound.playError();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
-        fb.innerText = "RESPUESTAS ERRÓNEAS. REVISA LA METABOLIZACIÓN HEPÁTICA Y CHARLOTTE FIGI";
+        let hints = [];
+        if (q1 !== 'A') hints.push('Pregunta 1 (11-OH-THC hepático)');
+        if (q2 !== 'B') hints.push('Pregunta 2 (CBD en Charlotte Figi)');
+        if (q3 !== 'A') hints.push('Pregunta 3 (ausencia de CB1 en tronco)');
+        fb.innerText = `Revisa: ${hints.join(', ')}`;
       }
     }
 
@@ -1884,6 +2044,8 @@
 
       if (q1 === 'A' && q2 === 'A' && q3 === 'A') {
         gameState.completed = true;
+        gameState.completedAt = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        markRoomCompleted(5);
         clearInterval(timerInterval);
         saveState();
         sound.playSuccess();
@@ -1897,23 +2059,33 @@
           });
         }
 
-        // Calcular tiempo total
+        // Calcular tiempo total empleado
         const elapsed = (35 * 60) - gameState.remainingSeconds;
-        const em = Math.floor(elapsed / 60);
-        const es = elapsed % 60;
+        const em = Math.floor(Math.max(0, elapsed) / 60);
+        const es = Math.max(0, elapsed) % 60;
         document.getElementById('finalTimeScore').innerText = `${String(em).padStart(2, '0')}:${String(es).padStart(2, '0')}`;
+
+        // Personalizar certificado con nombre del alumno
+        const studentName = (gameState.studentName && gameState.studentName.trim()) ? gameState.studentName.trim() : 'ESTUDIANTE FORENSE';
+        document.getElementById('certStudentName').innerText = studentName.toUpperCase();
+        document.getElementById('certDate').innerText = `Fecha de Resolución: ${gameState.completedAt || new Date().toLocaleDateString('es-ES')}`;
 
         updateTimerUI();
 
         // Mostrar pantalla de victoria
         document.querySelectorAll('.room-view').forEach(r => r.classList.add('hidden'));
         document.getElementById('victoryScreen').classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
         showToast("¡PACIENTE SALVADO!", "¡Completaste con honores la reanimación toxicológica de Mateo!", "success");
       } else {
         sound.playError();
         fb.className = "text-xs min-h-[24px] font-tech font-bold text-rose-400";
-        fb.innerText = "PROTOCOLO ERRÓNEO. EL PACIENTE PERSISTE EN TAQUICARDIA SEVERA";
+        let hints = [];
+        if (q1 !== 'A') hints.push('Decisión 1 (Benzodiacepinas)');
+        if (q2 !== 'A') hints.push('Decisión 2 (Posición Lateral)');
+        if (q3 !== 'A') hints.push('Decisión 3 (Reposición K+ y Mg2+)');
+        fb.innerText = `Revisa: ${hints.join(', ')}`;
       }
     }
 
@@ -2042,9 +2214,21 @@
           if (content) content.classList.add('hidden');
         }
       });
-      // Asegurarse de que el modal esté visible
       document.getElementById('dossierModal').classList.remove('hidden');
     }
+
+    // Cierre al pulsar el fondo oscuro en los modales
+    document.getElementById('dossierModal').addEventListener('click', (e) => {
+      if (e.target.id === 'dossierModal') toggleDossierModal();
+    });
+    document.getElementById('confirmRestartModal').addEventListener('click', (e) => {
+      if (e.target.id === 'confirmRestartModal') closeRestartModal();
+    });
+    document.getElementById('gameOverModal').addEventListener('click', (e) => {
+      if (e.target.id === 'gameOverModal') {
+        // En crisis, solo permitimos cerrar eligiendo opción
+      }
+    });
 
     // -------------------------------------------------------------
     // AUDIO Y CONTROLES
@@ -2060,6 +2244,29 @@
       } else {
         icon.className = "fa-solid fa-volume-xmark text-xs";
         showToast("Audio Silenciado", "Modo silencioso activado.", "info");
+      }
+    }
+
+    // -------------------------------------------------------------
+    // COMPARTIR CERTIFICADO DE VICTORIA
+    // -------------------------------------------------------------
+    function shareVictoryCertificate() {
+      sound.playKeyClick();
+      const name = (gameState.studentName && gameState.studentName.trim()) ? gameState.studentName.trim() : 'Estudiante Forense';
+      const time = document.getElementById('finalTimeScore').innerText;
+      const shareText = `🎓 ¡He completado el Escape Room Toxicológico Forense (Caso #CZ-892: Praga)! 🏥 Alumno/Equipo: ${name} • Tiempo: ${time} • Fases: 5/5 (100%) • Rango: Especialista Forense.`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'Escape Room Toxicológico - Certificado Forense',
+          text: shareText,
+          url: window.location.href
+        }).catch(() => {});
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(shareText);
+        showToast("COPIADO AL PORTAPAPELES", "El texto de tu certificado fue copiado para enviarlo al docente.", "success");
+      } else {
+        showToast("CERTIFICADO LISTO", shareText, "info");
       }
     }
 
@@ -2097,13 +2304,11 @@
 
       container.appendChild(toast);
 
-      // Animación de entrada
       requestAnimationFrame(() => {
         toast.classList.remove('translate-y-2', 'opacity-0');
         toast.classList.add('translate-y-0', 'opacity-100');
       });
 
-      // Auto-eliminar tras 2.8 segundos
       setTimeout(() => {
         toast.classList.add('opacity-0', 'translate-y-2');
         setTimeout(() => toast.remove(), 300);
@@ -2115,6 +2320,11 @@
     // -------------------------------------------------------------
     function startGame() {
       sound.init();
+      const nameInput = document.getElementById('studentNameInput');
+      if (nameInput && nameInput.value.trim()) {
+        gameState.studentName = nameInput.value.trim();
+      }
+
       gameState.started = true;
       document.getElementById('introScreen').classList.add('hidden');
       startTimer();
@@ -2146,28 +2356,49 @@
       loadSavedState();
       renderEcg();
 
+      // Si hay un nombre guardado, rellenarlo en el input
+      const nameInput = document.getElementById('studentNameInput');
+      if (nameInput && gameState.studentName) {
+        nameInput.value = gameState.studentName;
+      }
+
       // Si ya había empezado
       if (gameState.started) {
         document.getElementById('introScreen').classList.add('hidden');
         startTimer();
-        gameState.unlockedRooms.forEach(unlockRoom);
         switchRoom(gameState.currentRoom);
+      } else {
+        // En caso de que no haya empezado, asegurar que solo se ve la pantalla intro
+        document.querySelectorAll('.room-view').forEach(r => r.classList.add('hidden'));
+        document.getElementById('introScreen').classList.remove('hidden');
       }
 
       // Si estaba completado
       if (gameState.completed) {
         document.querySelectorAll('.room-view').forEach(r => r.classList.add('hidden'));
         document.getElementById('victoryScreen').classList.remove('hidden');
+        
+        const elapsed = (35 * 60) - gameState.remainingSeconds;
+        const em = Math.floor(Math.max(0, elapsed) / 60);
+        const es = Math.max(0, elapsed) % 60;
+        document.getElementById('finalTimeScore').innerText = `${String(em).padStart(2, '0')}:${String(es).padStart(2, '0')}`;
+
+        const studentName = (gameState.studentName && gameState.studentName.trim()) ? gameState.studentName.trim() : 'ESTUDIANTE FORENSE';
+        document.getElementById('certStudentName').innerText = studentName.toUpperCase();
+        document.getElementById('certDate').innerText = `Fecha de Resolución: ${gameState.completedAt || new Date().toLocaleDateString('es-ES')}`;
       }
 
-      // Restaurar selecciones de respuestas
+      // Restaurar selecciones de respuestas guardadas
       ['r2_q', 'r3_q', 'r5_q'].forEach(group => {
         const roomNum = group === 'r2_q' ? 2 : (group === 'r3_q' ? 3 : 5);
-        Object.entries(gameState[group]).forEach(([qId, val]) => {
-          if (val) updateQuizOptionUI(roomNum, qId, val);
-        });
+        if (gameState[group]) {
+          Object.entries(gameState[group]).forEach(([qId, val]) => {
+            if (val) updateQuizOptionUI(roomNum, qId, val);
+          });
+        }
       });
 
+      updatePhaseTabsUI();
       updateTimerUI();
     });
   </script>
